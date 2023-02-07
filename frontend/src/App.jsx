@@ -1,19 +1,22 @@
-import { Route, Routes } from "@solidjs/router";
-import { styled } from "solid-styled-components";
+import { Route, Routes, Navigate } from "@solidjs/router";
 import Header from "./components/header";
 import Edit from "./routes/edit";
 import Train from "./routes/train";
+import { createGlobalStyles } from "solid-styled-components";
 
 const App = () => {
   const navLinks = [
-    { name: `Train`, href: `/` },
+    { name: `Train`, href: `/train` },
     { name: `Edit`, href: `/edit` },
   ];
+
   return (
     <>
+      <GlobalStyle />
       <Header navLinks={navLinks} />
       <Routes>
-        <Route path="/" component={Train} />
+        <Route path="/" element={<Navigate href={`/train`} />} />
+        <Route path="/train" component={Train} />
         <Route path="/edit" component={Edit} />
       </Routes>
     </>
@@ -22,4 +25,10 @@ const App = () => {
 
 export default App;
 
-const Wrapper = styled("div")``;
+const GlobalStyle = createGlobalStyles`
+:root {
+  --mainColor: #333333;
+  --secondaryColor: #cccccc;
+  --thirdColor: #BB2222;
+  --navLinkSize: 22px;
+}`;
