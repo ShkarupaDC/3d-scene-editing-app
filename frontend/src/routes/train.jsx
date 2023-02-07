@@ -1,5 +1,11 @@
+import Slider from "../components/slider";
+
 const Train = () => {
-  return <div>Train page</div>;
+  return (
+    <>
+      <Slider />
+    </>
+  );
 };
 
 export default Train;

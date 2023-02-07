@@ -21,8 +21,8 @@ const Wrapper = styled("header")`
   display: flex;
   align-items: center;
   justify-content: end;
-  height: 60px;
-  padding: 0 60px;
+  height: var(--headerHeight);
+  padding: 0 var(--outsidePadding);
 `;
 const Navigation = styled("nav")`
   display: flex;
