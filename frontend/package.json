@@ -4,6 +4,7 @@
   "description": "",
   "license": "MIT",
   "dependencies": {
+    "@solidjs/router": "^0.7.0",
     "solid-js": "^1.6.10",
     "solid-styled-components": "^0.28.5",
     "three": "^0.149.0"
