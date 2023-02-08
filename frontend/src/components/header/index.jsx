@@ -28,6 +28,7 @@ const Navigation = styled("nav")`
   display: flex;
   gap: 20px;
   a {
+    font-weight: 400;
     display: block;
     font-size: var(--navLinkSize);
     font-weight: bold;

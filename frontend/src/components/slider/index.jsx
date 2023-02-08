@@ -10,19 +10,19 @@ const Slider = (props) => {
   let buttonNext, buttonPrev;
 
   // It will be in props in feature
-  const imagesList = [];
+  const imagesList = () => props.imagesList;
 
   // disable arrows if no data after suppose handler
   createEffect(() => {
     // disable button prev: if index === 0 / if no image-data
-    if (imageIndex() === 0 || imagesList.length === 0) {
+    if (imageIndex() === 0 || imagesList().length === 0) {
       buttonPrev.disabled = true;
     } else {
       buttonPrev.disabled = false;
     }
 
     // disable button next: if last index / if no image-data
-    if (imageIndex() === imagesList.length - 1 || imagesList.length === 0) {
+    if (imageIndex() === imagesList().length - 1 || imagesList().length === 0) {
       buttonNext.disabled = true;
     } else {
       buttonNext.disabled = false;
@@ -41,7 +41,7 @@ const Slider = (props) => {
 
   return (
     <Wrapper>
-      <Image src={imagesList[imageIndex()]} />
+      <Image src={imagesList()[imageIndex()]} />
       <Arrow
         type="button"
         class={`prev`}
@@ -66,7 +66,6 @@ export default Slider;
 
 const Wrapper = styled("div")`
   width: 678px;
-  overflow: hidden;
   display: flex;
   aspect-ratio: 4 / 3;
   background: var(--secondaryColor);
@@ -87,8 +86,6 @@ const Arrow = styled("button")`
   width: 30px;
   height: 30px;
   padding: 0;
-  border: none;
-  cursor: pointer;
   align-items: center;
   justify-content: center;
   opacity: 0.5;

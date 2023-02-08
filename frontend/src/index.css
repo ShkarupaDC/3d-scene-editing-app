@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap');
 
 *,
 *::before,
@@ -7,8 +7,57 @@
 }
 
 html,
-body {
+body,
+fieldset {
   padding: 0;
   margin: 0;
   font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+}
+
+fieldset {
+  border: none;
+  position: relative;
+}
+
+fieldset div {
+  font-size: 14px;
+  height: 40px;
+}
+
+input,
+button {
+  display: block;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  font-size: 18px;
+  padding: 6px 6px;
+  z-index: 1;
+  outline: none;
+}
+
+input:focus ~ label:not(.filesField),
+input:not(:placeholder-shown) + label:not(.filesField) {
+  transform: translate(-4px, -14px);
+  padding: 0 1px;
+  font-size: 12px;
+  background-color: white;
+}
+
+label:not(.filesField) {
+  font-size: 18px;
+  transition: 0.25s all;
+  pointer-events: none;
+  position: absolute;
+  top: 6px;
+  left: 10px;
+}
+
+button {
+  border: none;
+  cursor: pointer;
 }
