@@ -10,23 +10,19 @@ const Slider = (props) => {
   let buttonNext, buttonPrev;
 
   // It will be in props in feature
-  const imagesList = [
-    `https://silk-print.com.ua/webp/works/martin.webp`,
-    `https://silk-print.com.ua/webp/works/avanguard.webp`,
-    `https://silk-print.com.ua/webp/works/yacht.webp`,
-  ];
+  const imagesList = [];
 
   // disable arrows if no data after suppose handler
   createEffect(() => {
-    // button prev instead of index === 0
-    if (imageIndex() === 0) {
+    // disable button prev: if index === 0 / if no image-data
+    if (imageIndex() === 0 || imagesList.length === 0) {
       buttonPrev.disabled = true;
     } else {
       buttonPrev.disabled = false;
     }
 
-    // button next instead of last index
-    if (imageIndex() === imagesList.length - 1) {
+    // disable button next: if last index / if no image-data
+    if (imageIndex() === imagesList.length - 1 || imagesList.length === 0) {
       buttonNext.disabled = true;
     } else {
       buttonNext.disabled = false;
