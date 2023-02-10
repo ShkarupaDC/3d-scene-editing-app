@@ -10,7 +10,7 @@ const Slider = (props) => {
   let buttonNext, buttonPrev;
 
   // It will be in props in feature
-  const imagesList = () => props.imagesList;
+  const imagesList = () => props.imagesList || [];
 
   // disable arrows if no data after suppose handler
   createEffect(() => {

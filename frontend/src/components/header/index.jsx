@@ -3,11 +3,10 @@ import { styled } from "solid-styled-components";
 import NavLink from "./nav-link";
 
 const Header = (props) => {
-  const navLinks = () => props.navLinks;
   return (
     <Wrapper>
       <Navigation>
-        <For each={navLinks()}>
+        <For each={props.navLinks}>
           {({ name, href }) => <NavLink name={name} href={href} />}
         </For>
       </Navigation>
