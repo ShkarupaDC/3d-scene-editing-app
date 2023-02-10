@@ -2,12 +2,9 @@ import { createSignal } from "solid-js";
 import { styled } from "solid-styled-components";
 import icon from "../../assets/image-ico.svg";
 
-const UploadPhoto = (props) => {
+const InputFile = (props) => {
   // use state of files
   const [numFiles, setNumFiles] = createSignal(null);
-
-  // ref
-  const ref = () => props.ref;
 
   // placeholder depend of num files
   const placeholder = () =>
@@ -25,7 +22,7 @@ const UploadPhoto = (props) => {
     <Wrapper>
       <Field
         type={`file`}
-        ref={ref()}
+        ref={props.ref}
         placeholder={` `}
         id={props.name}
         accept={`image/*`}
@@ -41,7 +38,7 @@ const UploadPhoto = (props) => {
   );
 };
 
-export default UploadPhoto;
+export default InputFile;
 
 const Wrapper = styled("fieldset")`
   img {

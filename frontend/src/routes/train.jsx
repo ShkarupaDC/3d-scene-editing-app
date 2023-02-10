@@ -2,12 +2,12 @@ import { styled } from "solid-styled-components";
 import Button from "../components/form/button";
 import InputEmail from "../components/form/input-email";
 import InputHash from "../components/form/input-hash";
-import UploadPhoto from "../components/form/upload-photo";
 import Slider from "../components/slider";
+import InputFile from "../components/form/input-file";
 
 const Train = () => {
   // refs
-  let email, uploadImage, hash, submit;
+  let email, files, hash, submit;
 
   // get from input file in feature
   const imagesList = [
@@ -22,11 +22,7 @@ const Train = () => {
       <Form>
         <div>
           <InputEmail ref={email} name={`email`} placeholder={`Email`} />
-          <UploadPhoto
-            ref={uploadImage}
-            name={`files`}
-            placeholder={`Upload images`}
-          />
+          <InputFile ref={files} name={`files`} placeholder={`Upload images`} />
         </div>
         <Fieldset>
           <InputHash ref={hash} name={`hash`} placeholder={`Hash`} />
