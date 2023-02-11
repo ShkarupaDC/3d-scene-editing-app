@@ -1,0 +1,4 @@
+[submodule "control-nerf"]
+	path = control-nerf
+	url = git@github.com:ShkarupaDC/3d-scene-editing-nn.git
+	branch = control-nerf
