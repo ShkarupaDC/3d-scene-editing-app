@@ -1,37 +1,55 @@
+import { createEffect, createSignal } from "solid-js";
+import { createStore } from "solid-js/store";
 import { styled } from "solid-styled-components";
 import Button from "../components/form/button";
 import InputEmail from "../components/form/input-email";
 import InputHash from "../components/form/input-hash";
 import Slider from "../components/slider";
 import InputFile from "../components/form/input-file";
+import { getFilesUrls } from "../helpers/getFilesUrl";
 
 const Train = () => {
-  // refs
-  let email, files, hash, submit;
+  // store of data from inputs of form
+  const [formData, setFormData] = createStore({});
 
-  // get from input file in feature
-  const imagesList = [
-    `https://silk-print.com.ua/webp/works/martin.webp`,
-    `https://silk-print.com.ua/webp/works/avanguard.webp`,
-    `https://silk-print.com.ua/webp/works/yacht.webp`,
-  ];
+  // use state images urls
+  const [imagesList, setImagesList] = createSignal([]);
+
+  // set form data when inputs changed
+  const handleFormChange = (e) => {
+    const { target } = e;
+    setFormData(() => {
+      switch (target.type) {
+        case `email` || `text`:
+          return { [target.name]: target.value };
+        case `file`:
+          return { [target.name]: target.files };
+        default:
+          return;
+      }
+    });
+  };
+
+  // set images urls when input file is updated
+  createEffect(() => {
+    setImagesList(getFilesUrls(formData.files));
+  });
 
   return (
     <Wrapper>
-      <Slider imagesList={imagesList} />
-      <Form>
+      <Slider imagesList={imagesList()} />
+      <Form onChange={handleFormChange}>
         <div>
-          <InputEmail ref={email} name={`email`} placeholder={`Email`} />
-          <InputFile ref={files} name={`files`} placeholder={`Upload images`} />
+          <InputEmail
+            name={`email`}
+            placeholder={`Email`}
+            value={formData.email}
+          />
+          <InputFile name={`files`} placeholder={`Upload images`} />
         </div>
         <Fieldset>
-          <InputHash ref={hash} name={`hash`} placeholder={`Hash`} />
-          <Button
-            ref={submit}
-            name={`submit`}
-            placeholder={`Train`}
-            type={`submit`}
-          />
+          <InputHash name={`hash`} placeholder={`Hash`} />
+          <Button name={`submit`} placeholder={`Train`} type={`submit`} />
         </Fieldset>
       </Form>
     </Wrapper>

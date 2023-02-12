@@ -7,12 +7,17 @@ const InputFile = (props) => {
   const [numFiles, setNumFiles] = createSignal(null);
 
   // placeholder depend of num files
-  const placeholder = () =>
-    numFiles()
-      ? numFiles() === 1
-        ? `Selected ${numFiles()} image`
-        : `Selected ${numFiles()} images`
-      : props.placeholder;
+  const placeholder = () => {
+    const placeholderWithSelected = `Selected ${numFiles()} image`;
+    switch (numFiles()) {
+      case null:
+        return props.placeholder;
+      case 1:
+        return placeholderWithSelected;
+      default:
+        return placeholderWithSelected + `s`;
+    }
+  };
 
   const handleChange = (e) => {
     setNumFiles(e.target.files.length);
@@ -22,7 +27,6 @@ const InputFile = (props) => {
     <Wrapper>
       <Field
         type={`file`}
-        ref={props.ref}
         placeholder={` `}
         id={props.name}
         accept={`image/*`}

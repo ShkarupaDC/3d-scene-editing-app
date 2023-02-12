@@ -3,7 +3,7 @@ import { styled } from "solid-styled-components";
 const InputHash = (props) => {
   return (
     <Wrapper>
-      <Field placeholder={` `} ref={props.ref} id={props.name} disabled />
+      <Field placeholder={` `} id={props.name} name={props.name} disabled />
       <Label for={props.name}>{props.placeholder}</Label>
     </Wrapper>
   );

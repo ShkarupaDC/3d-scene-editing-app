@@ -1,9 +1,17 @@
 import { styled } from "solid-styled-components";
 
 const InputEmail = (props) => {
+  const value = () => props.value || "";
+
   return (
     <Wrapper>
-      <Field type={`email`} placeholder={` `} ref={props.ref} id={props.name} />
+      <Field
+        type={`email`}
+        placeholder={` `}
+        id={props.name}
+        name={props.name}
+        value={value()}
+      />
       <Label for={props.name}>{props.placeholder}</Label>
       <Message>{props.errorMessage}</Message>
     </Wrapper>
