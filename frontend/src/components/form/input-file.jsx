@@ -4,23 +4,20 @@ import icon from "../../assets/image-ico.svg";
 
 const InputFile = (props) => {
   // use state of files
-  const [numFiles, setNumFiles] = createSignal(null);
+  const [files, setFiles] = createSignal(props.defaultFiles);
 
   // placeholder depend of num files
   const placeholder = () => {
-    const placeholderWithSelected = `Selected ${numFiles()} image`;
-    switch (numFiles()) {
-      case null:
+    const numFiles = files().length;
+    const placeholderWithSelected = `Selected ${numFiles} image`;
+    switch (numFiles) {
+      case 0:
         return props.placeholder;
       case 1:
         return placeholderWithSelected;
       default:
         return placeholderWithSelected + `s`;
     }
-  };
-
-  const handleChange = (e) => {
-    setNumFiles(e.target.files.length);
   };
 
   return (
@@ -31,7 +28,9 @@ const InputFile = (props) => {
         id={props.name}
         accept={`image/*`}
         multiple
-        onChange={handleChange}
+        onChange={(e) => setFiles(e.target.files)}
+        name={props.name}
+        files={files()}
       />
       <Label for={props.name} class={`filesField`}>
         <img src={icon} />

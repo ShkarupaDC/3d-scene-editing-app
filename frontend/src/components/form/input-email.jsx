@@ -1,16 +1,18 @@
+import { createSignal } from "solid-js";
 import { styled } from "solid-styled-components";
 
 const InputEmail = (props) => {
-  const value = () => props.value || "";
+  const [value, setValue] = createSignal(props.defaultValue);
 
   return (
     <Wrapper>
       <Field
         type={`email`}
+        value={value()}
         placeholder={` `}
         id={props.name}
         name={props.name}
-        value={value()}
+        onChange={(e) => setValue(e.target.value)}
       />
       <Label for={props.name}>{props.placeholder}</Label>
       <Message>{props.errorMessage}</Message>

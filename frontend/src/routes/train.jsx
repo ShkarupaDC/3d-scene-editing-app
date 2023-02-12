@@ -10,13 +10,18 @@ import { getFilesUrls } from "../helpers/getFilesUrl";
 
 const Train = () => {
   // store of data from inputs of form
-  const [formData, setFormData] = createStore({});
+  const [formData, setFormData] = createStore({
+    email: "",
+    files: [],
+    hash: "",
+  });
 
   // use state images urls
   const [imagesList, setImagesList] = createSignal([]);
 
   // set form data when inputs changed
   const handleFormChange = (e) => {
+    console.log(formData);
     const { target } = e;
     setFormData(() => {
       switch (target.type) {
@@ -43,12 +48,20 @@ const Train = () => {
           <InputEmail
             name={`email`}
             placeholder={`Email`}
-            value={formData.email}
+            defaultValue={formData.email}
           />
-          <InputFile name={`files`} placeholder={`Upload images`} />
+          <InputFile
+            name={`files`}
+            placeholder={`Upload images`}
+            defaultFiles={formData.files}
+          />
         </div>
         <Fieldset>
-          <InputHash name={`hash`} placeholder={`Hash`} />
+          <InputHash
+            name={`hash`}
+            placeholder={`Hash`}
+            defaultValue={formData.hash}
+          />
           <Button name={`submit`} placeholder={`Train`} type={`submit`} />
         </Fieldset>
       </Form>
