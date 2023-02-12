@@ -21,7 +21,6 @@ const Train = () => {
 
   // set form data when inputs changed
   const handleFormChange = (e) => {
-    console.log(formData);
     const { target } = e;
     setFormData(() => {
       switch (target.type) {

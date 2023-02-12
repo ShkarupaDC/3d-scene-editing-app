@@ -1,4 +1,4 @@
-import { createSignal, createEffect } from "solid-js";
+import { createSignal, createEffect, on } from "solid-js";
 import { styled } from "solid-styled-components";
 import arrow from "../../assets/arrow.svg";
 
@@ -12,20 +12,32 @@ const Slider = (props) => {
   // It will be in props in feature
   const imagesList = () => props.imagesList || [];
 
+  createEffect(on(imagesList, () => setImageIndex(0)));
+
   // disable arrows if no data after suppose handler
   createEffect(() => {
-    // disable button prev: if index === 0 / if no image-data
-    if (imageIndex() === 0 || imagesList().length === 0) {
+    const numImages = imagesList().length;
+    // disabled both buttons if no-data or one image in data
+    if (numImages <= 1) {
+      buttonNext.disabled = true;
       buttonPrev.disabled = true;
     } else {
-      buttonPrev.disabled = false;
-    }
-
-    // disable button next: if last index / if no image-data
-    if (imageIndex() === imagesList().length - 1 || imagesList().length === 0) {
-      buttonNext.disabled = true;
-    } else {
-      buttonNext.disabled = false;
+      switch (imageIndex()) {
+        // if index === 0 button prev is disabled
+        case 0:
+          buttonPrev.disabled = true;
+          buttonNext.disabled = false;
+          break;
+        // if index === last index button nex is disabled
+        case numImages - 1:
+          buttonPrev.disabled = false;
+          buttonNext.disabled = true;
+          break;
+        // show both buttons
+        default:
+          buttonPrev.disabled = false;
+          buttonNext.disabled = false;
+      }
     }
   });
 
@@ -70,13 +82,13 @@ const Wrapper = styled("div")`
   aspect-ratio: 4 / 3;
   background: var(--secondaryColor);
   position: relative;
+  justify-content: center;
+  align-content: center;
 `;
 
 const Image = styled("img")`
   max-width: 100%;
   max-height: 100%;
-  justify-self: center;
-  align-self: center;
 `;
 
 const Arrow = styled("button")`
