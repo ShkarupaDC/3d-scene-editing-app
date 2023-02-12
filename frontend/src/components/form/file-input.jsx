@@ -2,7 +2,7 @@ import { createSignal } from "solid-js";
 import { styled } from "solid-styled-components";
 import icon from "../../assets/image-ico.svg";
 
-const InputFile = (props) => {
+const FileInput = (props) => {
   // use state of files
   const [files, setFiles] = createSignal(props.defaultFiles);
 
@@ -16,7 +16,7 @@ const InputFile = (props) => {
       case 1:
         return placeholderWithSelected;
       default:
-        return placeholderWithSelected + `s`;
+        return `${placeholderWithSelected}s`;
     }
   };
 
@@ -41,7 +41,7 @@ const InputFile = (props) => {
   );
 };
 
-export default InputFile;
+export default FileInput;
 
 const Wrapper = styled("fieldset")`
   img {

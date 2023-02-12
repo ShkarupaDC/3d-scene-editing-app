@@ -2,10 +2,10 @@ import { createEffect, createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
 import { styled } from "solid-styled-components";
 import Button from "../components/form/button";
-import InputEmail from "../components/form/input-email";
-import InputHash from "../components/form/input-hash";
+import InputEmail from "../components/form/email-input";
+import InputHash from "../components/form/hash-input";
 import Slider from "../components/slider";
-import InputFile from "../components/form/input-file";
+import InputFile from "../components/form/file-input";
 import { getFilesUrls } from "../helpers/getFilesUrl";
 
 const Train = () => {

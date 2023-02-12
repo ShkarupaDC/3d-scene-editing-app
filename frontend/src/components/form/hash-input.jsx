@@ -1,7 +1,7 @@
 import { createSignal } from "solid-js";
 import { styled } from "solid-styled-components";
 
-const InputHash = (props) => {
+const HashInput = (props) => {
   const [value, setValue] = createSignal(props.defaultValue);
   return (
     <Wrapper>
@@ -18,7 +18,7 @@ const InputHash = (props) => {
   );
 };
 
-export default InputHash;
+export default HashInput;
 
 const Wrapper = styled("fieldset")``;
 

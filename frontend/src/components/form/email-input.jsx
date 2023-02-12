@@ -1,7 +1,7 @@
 import { createSignal } from "solid-js";
 import { styled } from "solid-styled-components";
 
-const InputEmail = (props) => {
+const EmailInput = (props) => {
   const [value, setValue] = createSignal(props.defaultValue);
 
   return (
@@ -20,7 +20,7 @@ const InputEmail = (props) => {
   );
 };
 
-export default InputEmail;
+export default EmailInput;
 
 const Wrapper = styled.fieldset``;
 
