@@ -44,6 +44,13 @@ button {
   outline: none;
 }
 
+input:disabled ~ label,
+input:disabled,
+button:disabled {
+  color:#ccc;
+  border-color: #ccc;
+}
+
 input:focus ~ label:not(.filesField),
 input:not(:placeholder-shown) + label:not(.filesField) {
   transform: translate(-4px, -14px);

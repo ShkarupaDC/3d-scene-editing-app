@@ -3,7 +3,11 @@ import { styled } from "solid-styled-components";
 const Button = (props) => {
   return (
     <Wrapper class="wrapper-input">
-      <Field type={props.type} disabled={props.disabled}>
+      <Field
+        type={props.type}
+        disabled={props.disabled}
+        onClick={props.onClick}
+      >
         {props.placeholder}
       </Field>
     </Wrapper>

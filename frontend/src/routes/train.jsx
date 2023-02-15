@@ -1,4 +1,4 @@
-import { createEffect, createSignal } from "solid-js";
+import { createEffect, createResource, createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
 import { styled } from "solid-styled-components";
 import Button from "../components/form/button";
@@ -8,13 +8,20 @@ import Slider from "../components/slider";
 import InputFile from "../components/form/file-input";
 import { getFilesUrls } from "../helpers/getFilesUrl";
 
+const fetchFormData = async (formData) => {
+  await fetch(
+    `${import.meta.env.VITE_API_URL}/scene-representation.json`
+  ).tojson();
+};
+
 const Train = () => {
   // store of data from inputs of form
   const [formData, setFormData] = createStore({
     email: "",
     files: [],
-    hash: "",
   });
+
+  const [hash, setHash] = createSignal("");
 
   const [imagesList, setImagesList] = createSignal([]);
 
@@ -54,12 +61,16 @@ const Train = () => {
           </div>
         </Form>
         <Fieldset>
-          <InputHash
-            name={`hash`}
-            placeholder={`Hash`}
-            defaultValue={formData.hash}
+          <InputHash name={`hash`} placeholder={`Hash`} defaultValue={hash()} />
+          <Button
+            name={`submit`}
+            placeholder={`Train`}
+            type={`button`}
+            onClick={() => {
+              console.log(formData);
+              setHash(createResource(formData, fetchFormData).hash);
+            }}
           />
-          <Button name={`submit`} placeholder={`Train`} type={`submit`} />
         </Fieldset>
       </Container>
     </Wrapper>
