@@ -16,20 +16,16 @@ const Train = () => {
     hash: "",
   });
 
-  // use state images urls
   const [imagesList, setImagesList] = createSignal([]);
 
   // set form data when inputs changed
   const handleFormChange = (e) => {
     const { target } = e;
     setFormData(() => {
-      switch (target.type) {
-        case `email` || `text`:
-          return { [target.name]: target.value };
-        case `file`:
-          return { [target.name]: target.files };
-        default:
-          return;
+      if (target.type === `file`) {
+        return { [target.name]: target.files };
+      } else {
+        return { [target.name]: target.value };
       }
     });
   };

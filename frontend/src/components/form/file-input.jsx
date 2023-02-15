@@ -3,20 +3,15 @@ import { styled } from "solid-styled-components";
 import icon from "../../assets/image-ico.svg";
 
 const FileInput = (props) => {
-  // use state of files
   const [files, setFiles] = createSignal(props.defaultFiles);
 
   // placeholder depend of num files
   const placeholder = () => {
     const numFiles = files().length;
-    const placeholderWithSelected = `Selected ${numFiles} image`;
-    switch (numFiles) {
-      case 0:
-        return props.placeholder;
-      case 1:
-        return placeholderWithSelected;
-      default:
-        return `${placeholderWithSelected}s`;
+    if (numFiles == 0) {
+      return props.placeholder;
+    } else {
+      return `Selected ${numFiles} image${numFiles == 1 ? "" : "s"}`;
     }
   };
 

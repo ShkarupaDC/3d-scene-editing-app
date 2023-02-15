@@ -1,5 +1,5 @@
 export const getFilesUrls = (files) => {
   if (files) {
-    return Object.keys(files).map((index) => URL.createObjectURL(files[index]));
+    return Object.values(files).map((file) => URL.createObjectURL(file));
   }
 };

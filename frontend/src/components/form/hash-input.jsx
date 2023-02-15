@@ -3,24 +3,20 @@ import { styled } from "solid-styled-components";
 import icon from "../../assets/copy-ico.svg";
 
 const HashInput = (props) => {
-  const [value, setValue] = createSignal(
-    props.defaultValue || `djkbfsdjkbfsdj`
-  );
-  const [isValue, setIsValue] = createSignal(Boolean(props.defaultValue));
+  const value = () => props.value || "";
+  const [hasValue, setHasValue] = createSignal(Boolean(props.defaultValue));
 
-  createEffect(() => {
-    setIsValue(Boolean(value()));
-  });
+  const freezeInput = (event) => {
+    event.target.value = value();
+  };
 
-  // copy value of field to clickboard
-  const copyToClickboard = () => {
+  const writeTextToClickboard = () => {
     navigator.clipboard.writeText(value());
   };
 
-  // freeze value in input
-  const freezeInput = (e) => {
-    e.target.value = value();
-  };
+  createEffect(() => {
+    setHasValue(value().length !== 0);
+  });
 
   return (
     <Wrapper>
@@ -29,12 +25,16 @@ const HashInput = (props) => {
         placeholder={` `}
         id={props.name}
         name={props.name}
-        onChange={freezeInput}
+        onInput={freezeInput}
         value={value()}
-        disabled={!isValue()}
+        disabled={!hasValue()}
       />
       <Label for={props.name}>{props.placeholder}</Label>
-      <Image src={icon} visibility={isValue()} onClick={copyToClickboard} />
+      <Image
+        src={icon}
+        visibility={hasValue()}
+        onClick={writeTextToClickboard}
+      />
     </Wrapper>
   );
 };
