@@ -19,7 +19,7 @@ const HashInput = (props) => {
   });
 
   return (
-    <Wrapper>
+    <Wrapper class="wrapper-input">
       <Field
         type={`text`}
         placeholder={` `}
@@ -41,7 +41,7 @@ const HashInput = (props) => {
 
 export default HashInput;
 
-const Wrapper = styled("fieldset")``;
+const Wrapper = styled("div")``;
 
 const Field = styled("input")`
   border: 2px solid var(--mainColor);

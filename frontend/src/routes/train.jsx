@@ -19,8 +19,8 @@ const Train = () => {
   const [imagesList, setImagesList] = createSignal([]);
 
   // set form data when inputs changed
-  const handleFormChange = (e) => {
-    const { target } = e;
+  const handleFormChange = (event) => {
+    const { target } = event;
     setFormData(() => {
       if (target.type === `file`) {
         return { [target.name]: target.files };
@@ -38,19 +38,21 @@ const Train = () => {
   return (
     <Wrapper>
       <Slider imagesList={imagesList()} />
-      <Form onChange={handleFormChange}>
-        <div>
-          <InputEmail
-            name={`email`}
-            placeholder={`Email`}
-            defaultValue={formData.email}
-          />
-          <InputFile
-            name={`files`}
-            placeholder={`Upload images`}
-            defaultFiles={formData.files}
-          />
-        </div>
+      <Container>
+        <Form onChange={handleFormChange}>
+          <div>
+            <InputEmail
+              name={`email`}
+              placeholder={`Email`}
+              defaultValue={formData.email}
+            />
+            <InputFile
+              name={`files`}
+              placeholder={`Upload images`}
+              defaultFiles={formData.files}
+            />
+          </div>
+        </Form>
         <Fieldset>
           <InputHash
             name={`hash`}
@@ -59,7 +61,7 @@ const Train = () => {
           />
           <Button name={`submit`} placeholder={`Train`} type={`submit`} />
         </Fieldset>
-      </Form>
+      </Container>
     </Wrapper>
   );
 };
@@ -71,10 +73,7 @@ const Wrapper = styled("section")`
   gap: var(--outsidePadding);
 `;
 
-const Form = styled("form")`
-  width: 350px;
-  position: relative;
-`;
+const Form = styled("form")``;
 
 const Fieldset = styled("fieldset")`
   display: flex;
@@ -87,4 +86,9 @@ const Fieldset = styled("fieldset")`
   button {
     width: 100px;
   }
+`;
+
+const Container = styled("div")`
+  width: 350px;
+  position: relative;
 `;

@@ -16,14 +16,14 @@ const FileInput = (props) => {
   };
 
   return (
-    <Wrapper>
+    <Wrapper class="wrapper-input">
       <Field
         type={`file`}
         placeholder={` `}
         id={props.name}
         accept={`image/*`}
         multiple
-        onChange={(e) => setFiles(e.target.files)}
+        onChange={(event) => setFiles(event.target.files)}
         name={props.name}
         files={files()}
       />
@@ -38,7 +38,7 @@ const FileInput = (props) => {
 
 export default FileInput;
 
-const Wrapper = styled("fieldset")`
+const Wrapper = styled("div")`
   img {
     position: absolute;
     top: 10px;

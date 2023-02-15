@@ -2,7 +2,7 @@ import { styled } from "solid-styled-components";
 
 const Button = (props) => {
   return (
-    <Wrapper>
+    <Wrapper class="wrapper-input">
       <Field type={props.type} disabled={props.disabled}>
         {props.placeholder}
       </Field>
@@ -12,7 +12,7 @@ const Button = (props) => {
 
 export default Button;
 
-const Wrapper = styled("fieldset")``;
+const Wrapper = styled("div")``;
 
 const Field = styled("button")`
   border: 2px solid var(--mainColor);

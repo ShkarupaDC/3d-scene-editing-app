@@ -8,21 +8,25 @@
 
 html,
 body,
-fieldset {
+.wrapper-input {
   padding: 0;
   margin: 0;
   font-family: "Montserrat", sans-serif;
   font-weight: 500;
 }
 
-fieldset {
-  border: none;
+
+.wrapper-input{
   position: relative;
 }
 
-fieldset div {
+.wrapper-input div {
   font-size: 14px;
   height: 40px;
+}
+
+fieldset {
+  border: none;
 }
 
 input,
