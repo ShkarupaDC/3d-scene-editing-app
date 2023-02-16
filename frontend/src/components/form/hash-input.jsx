@@ -10,7 +10,7 @@ const HashInput = (props) => {
     event.target.value = value();
   };
 
-  const writeTextToClickboard = () => {
+  const writeTextToClipboard = () => {
     navigator.clipboard.writeText(value());
   };
 
@@ -33,7 +33,7 @@ const HashInput = (props) => {
       <Image
         src={icon}
         visibility={hasValue()}
-        onClick={writeTextToClickboard}
+        onClick={writeTextToClipboard}
       />
     </Wrapper>
   );

@@ -1,7 +1,7 @@
 {
   "name": "3d-scene-editing-app",
-  "version": "0.0.0",
-  "description": "",
+  "version": "1.0.0",
+  "description": "Application for editing objects on 3d scene resulting from training",
   "license": "MIT",
   "dependencies": {
     "@solidjs/router": "^0.7.0",

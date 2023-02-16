@@ -1,4 +1,4 @@
-import { createEffect, createResource, createSignal } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
 import { styled } from "solid-styled-components";
 import Button from "../components/form/button";
@@ -9,9 +9,12 @@ import InputFile from "../components/form/file-input";
 import { getFilesUrls } from "../helpers/getFilesUrl";
 
 const fetchFormData = async (formData) => {
-  await fetch(
+  const res = await fetch(
     `${import.meta.env.VITE_API_URL}/scene-representation.json`
-  ).tojson();
+  );
+  const data = await res.json();
+
+  return data.hash;
 };
 
 const Train = () => {
@@ -35,6 +38,14 @@ const Train = () => {
         return { [target.name]: target.value };
       }
     });
+  };
+
+  const handleFormSubmit = async () => {
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/scene-representation.json`
+    );
+    const { hash } = await res.json();
+    setHash(hash);
   };
 
   // set images urls when input file is updated
@@ -61,15 +72,12 @@ const Train = () => {
           </div>
         </Form>
         <Fieldset>
-          <InputHash name={`hash`} placeholder={`Hash`} defaultValue={hash()} />
+          <InputHash name={`hash`} placeholder={`Hash`} value={hash()} />
           <Button
             name={`submit`}
             placeholder={`Train`}
             type={`button`}
-            onClick={() => {
-              console.log(formData);
-              setHash(createResource(formData, fetchFormData).hash);
-            }}
+            onClick={handleFormSubmit}
           />
         </Fieldset>
       </Container>
