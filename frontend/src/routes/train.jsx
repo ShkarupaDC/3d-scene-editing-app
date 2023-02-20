@@ -7,21 +7,19 @@ import InputHash from "../components/form/hash-input";
 import Slider from "../components/slider";
 import InputFile from "../components/form/file-input";
 import { getFilesUrls } from "../helpers/getFilesUrl";
-
-const fetchFormData = async (formData) => {
-  const res = await fetch(
-    `${import.meta.env.VITE_API_URL}/scene-representation.json`
-  );
-  const data = await res.json();
-
-  return data.hash;
-};
+import { validateEmail } from "../helpers/validation";
 
 const Train = () => {
   // store of data from inputs of form
   const [formData, setFormData] = createStore({
     email: "",
     files: [],
+  });
+
+  // store of errors inputs of form
+  const [formErrors, setFormErrors] = createStore({
+    email: "",
+    files: "",
   });
 
   const [hash, setHash] = createSignal("");
@@ -40,12 +38,37 @@ const Train = () => {
     });
   };
 
+  createEffect(() => {
+    const isValidEmail = validateEmail(formData.email);
+    const isValidFiles = formData.files.length > 10;
+    if (isValidEmail) {
+      setFormErrors({ email: "" });
+    }
+
+    if (isValidFiles) {
+      setFormErrors({ files: "" });
+    }
+  });
+
   const handleFormSubmit = async () => {
-    const res = await fetch(
-      `${import.meta.env.VITE_API_URL}/scene-representation.json`
-    );
-    const { hash } = await res.json();
-    setHash(hash);
+    const isValidEmail = validateEmail(formData.email);
+    const isValidFiles = formData.files.length > 10;
+
+    // validate
+    if (isValidEmail && isValidFiles) {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/scene-representation.json`
+      );
+      const { hash } = await res.json();
+      setHash(hash);
+    } else {
+      if (!isValidEmail) {
+        setFormErrors({ email: "Email is not valid" });
+      }
+      if (!isValidFiles) {
+        setFormErrors({ files: "Files must be more than 10" });
+      }
+    }
   };
 
   // set images urls when input file is updated
@@ -57,17 +80,19 @@ const Train = () => {
     <Wrapper>
       <Slider imagesList={imagesList()} />
       <Container>
-        <Form onChange={handleFormChange}>
+        <Form onInput={handleFormChange}>
           <div>
             <InputEmail
               name={`email`}
               placeholder={`Email`}
               defaultValue={formData.email}
+              errorMessage={formErrors.email}
             />
             <InputFile
               name={`files`}
               placeholder={`Upload images`}
               defaultFiles={formData.files}
+              errorMessage={formErrors.files}
             />
           </div>
         </Form>

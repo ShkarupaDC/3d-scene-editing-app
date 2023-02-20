@@ -16,7 +16,7 @@ const FileInput = (props) => {
   };
 
   return (
-    <Wrapper class="wrapper-input">
+    <Wrapper class="wrapper-input" error={props.errorMessage}>
       <Field
         type={`file`}
         placeholder={` `}
@@ -47,6 +47,14 @@ const Wrapper = styled("div")`
   label:hover > img {
     filter: invert();
   }
+  label {
+    border: 2px solid
+      ${(props) => (props.error ? "var(--thirdColor)" : "var(--mainColor)")};
+    &:hover {
+      background-color: ${(props) =>
+        props.error ? "var(--thirdColor)" : "var(--mainColor)"};
+    }
+  }
 `;
 const Field = styled("input")`
   display: none;
@@ -57,12 +65,12 @@ const Label = styled("label")`
   text-align: center;
   width: 100%;
   font-size: 18px;
-  border: 2px solid var(--mainColor);
   cursor: pointer;
   transition: background-color 0.25s;
   &:hover {
-    background-color: var(--mainColor);
     color: white;
   }
 `;
-const Message = styled("div")``;
+const Message = styled("div")`
+  color: var(--thirdColor);
+`;

@@ -5,7 +5,7 @@ const EmailInput = (props) => {
   const [value, setValue] = createSignal(props.defaultValue);
 
   return (
-    <Wrapper class="wrapper-input">
+    <Wrapper class="wrapper-input" error={props.errorMessage}>
       <Field
         type={`email`}
         value={value()}
@@ -22,14 +22,17 @@ const EmailInput = (props) => {
 
 export default EmailInput;
 
-const Wrapper = styled("div")``;
-
-const Field = styled("input")`
-  border-bottom: 2px solid var(--mainColor);
+const Wrapper = styled("div")`
+  input {
+    border-bottom: 2px solid
+      ${(props) => (props.error ? "var(--thirdColor)" : "var(--mainColor)")};
+  }
 `;
 
-const Label = styled("label")`
-  color: var(--mainColor);
-`;
+const Field = styled("input")``;
 
-const Message = styled("div")``;
+const Label = styled("label")``;
+
+const Message = styled("div")`
+  color: var(--thirdColor);
+`;

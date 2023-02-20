@@ -64,7 +64,7 @@ label:not(.filesField) {
   transition: 0.25s all;
   pointer-events: none;
   position: absolute;
-  top: 6px;
+  top: 5px;
   left: 10px;
 }
 
