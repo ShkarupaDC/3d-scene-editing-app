@@ -6,14 +6,6 @@ const HashInput = (props) => {
   const value = () => props.value || "";
   const [hasValue, setHasValue] = createSignal(Boolean(props.defaultValue));
 
-  const freezeInput = (event) => {
-    event.target.value = value();
-  };
-
-  const writeTextToClipboard = () => {
-    navigator.clipboard.writeText(value());
-  };
-
   createEffect(() => {
     setHasValue(value().length !== 0);
   });
@@ -25,7 +17,10 @@ const HashInput = (props) => {
         placeholder={` `}
         id={props.name}
         name={props.name}
-        onInput={freezeInput}
+        // eslint-disable-next-line solid/reactivity
+        onInput={(event) => {
+          event.target.value = value();
+        }}
         value={value()}
         disabled={!hasValue()}
       />
@@ -33,7 +28,8 @@ const HashInput = (props) => {
       <Image
         src={icon}
         visibility={hasValue()}
-        onClick={writeTextToClipboard}
+        // eslint-disable-next-line solid/reactivity
+        onClick={() => navigator.clipboard.writeText(value())}
       />
     </Wrapper>
   );

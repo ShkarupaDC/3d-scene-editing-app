@@ -41,6 +41,7 @@ const Train = () => {
   createEffect(() => {
     const isValidEmail = validateEmail(formData.email);
     const isValidFiles = formData.files.length > 10;
+
     if (isValidEmail) {
       setFormErrors({ email: "" });
     }
@@ -51,15 +52,27 @@ const Train = () => {
   });
 
   const handleFormSubmit = async () => {
+    const email = formData.email;
     const isValidEmail = validateEmail(formData.email);
     const isValidFiles = formData.files.length > 10;
 
-    // validate
+    // Create new FormData object and append files
+    const files = new FormData();
     if (isValidEmail && isValidFiles) {
+      for (let i = 0; i < formData.files.length; i++) {
+        const currFile = formData.files[i];
+        files.append(`file-${i}`, currFile, currFile.name);
+      }
+
+      // Uploading the files using the fetch API to the server (temporarily with json for static)
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/scene-representation.json`
+        `${import.meta.env.VITE_API_URL}/scene-representation.json`,
+        {
+          method: "POST",
+          body: { files, email },
+        }
       );
-      const { hash } = await res.json();
+      const hash = await res.json();
       setHash(hash);
     } else {
       if (!isValidEmail) {
