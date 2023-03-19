@@ -1,4 +1,4 @@
-import { createEffect, createMemo } from "solid-js";
+import { createMemo } from "solid-js";
 import { styled } from "solid-styled-components";
 import { createFormGroup, createFormControl } from "solid-forms";
 import Button from "../components/form/button";
@@ -25,11 +25,17 @@ const Train = () => {
   const handleFormSubmit = async () => {
     if (controls.email.isValid && controls.files.isValid) {
       // Uploading the files using the fetch API to the server (temporarily with json for static)
+      const formData = new FormData();
+      const files = controls.files.value;
+      for (let i = 0; i < files.length; i++) {
+        const currFile = files[i];
+        formData.append(`files`, currFile, currFile.name);
+      }
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/scene-representation`,
         {
           method: "POST",
-          body: { files: controls.files.value, email: controls.email.value },
+          body: { files: formData, email: controls.email.value },
         }
       );
       const hash = await res.json();
