@@ -1,11 +1,11 @@
-import { createEffect, createSignal } from "solid-js";
+import { createEffect, createMemo, createSignal } from "solid-js";
 import { styled } from "solid-styled-components";
 import { createFormGroup, createFormControl } from "solid-forms";
 import Button from "../components/form/button";
-import InputEmail from "../components/form/email-input";
-import InputHash from "../components/form/hash-input";
+import EmailInput from "../components/form/email-input";
+import HashInput from "../components/form/hash-input";
+import FileInput from "../components/form/file-input";
 import Slider from "../components/slider";
-import InputFile from "../components/form/file-input";
 import { validators } from "../helpers/validators";
 import { getFilesUrls } from "../helpers/getFilesUrl";
 
@@ -20,14 +20,10 @@ const Train = () => {
     hash: createFormControl("", { readonly: true, disabled: true }),
   });
 
-  const [imageList, setImageList] = createSignal([]);
+  const imageList = createMemo(() => getFilesUrls(controls.files.value));
 
   createEffect(() => {
     controls.hash.markDisabled(!controls.hash.value);
-  });
-
-  createEffect(() => {
-    setImageList(getFilesUrls(controls.files.value));
   });
 
   return (
@@ -36,12 +32,12 @@ const Train = () => {
       <Container>
         <Form>
           <div>
-            <InputEmail
+            <EmailInput
               name={`email`}
               placeholder={`Email`}
               control={controls.email}
             />
-            <InputFile
+            <FileInput
               name={`files`}
               placeholder={`Upload images`}
               control={controls.files}
@@ -49,7 +45,7 @@ const Train = () => {
           </div>
         </Form>
         <Fieldset>
-          <InputHash
+          <HashInput
             name={`hash`}
             placeholder={`Hash`}
             control={controls.hash}
