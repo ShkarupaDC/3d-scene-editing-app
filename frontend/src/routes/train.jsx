@@ -1,122 +1,60 @@
 import { createEffect, createSignal } from "solid-js";
-import { createStore } from "solid-js/store";
 import { styled } from "solid-styled-components";
+import { createFormGroup, createFormControl } from "solid-forms";
 import Button from "../components/form/button";
 import InputEmail from "../components/form/email-input";
 import InputHash from "../components/form/hash-input";
 import Slider from "../components/slider";
 import InputFile from "../components/form/file-input";
+import { validators } from "../helpers/validators";
 import { getFilesUrls } from "../helpers/getFilesUrl";
-import { validateEmail } from "../helpers/validation";
 
 const Train = () => {
-  // store of data from inputs of form
-  const [formData, setFormData] = createStore({
-    email: "",
-    files: [],
+  const { controls } = createFormGroup({
+    email: createFormControl("", {
+      validators: validators.email,
+    }),
+    files: createFormControl([], {
+      validators: validators.files,
+    }),
+    hash: createFormControl("", { readonly: true, disabled: true }),
   });
 
-  // store of errors inputs of form
-  const [formErrors, setFormErrors] = createStore({
-    email: "",
-    files: "",
-  });
-
-  const [hash, setHash] = createSignal("");
-
-  const [imagesList, setImagesList] = createSignal([]);
-
-  // set form data when inputs changed
-  const handleFormChange = (event) => {
-    const { target } = event;
-    setFormData(() => {
-      if (target.type === `file`) {
-        return { [target.name]: target.files };
-      } else {
-        return { [target.name]: target.value };
-      }
-    });
-  };
+  const [imageList, setImageList] = createSignal([]);
 
   createEffect(() => {
-    const isValidEmail = validateEmail(formData.email);
-    const isValidFiles = formData.files.length > 10;
-
-    if (isValidEmail) {
-      setFormErrors({ email: "" });
-    }
-
-    if (isValidFiles) {
-      setFormErrors({ files: "" });
-    }
+    controls.hash.markDisabled(!controls.hash.value);
   });
 
-  const handleFormSubmit = async () => {
-    const email = formData.email;
-    const isValidEmail = validateEmail(formData.email);
-    const isValidFiles = formData.files.length > 10;
-
-    // Create new FormData object and append files
-    const files = new FormData();
-    if (isValidEmail && isValidFiles) {
-      for (let i = 0; i < formData.files.length; i++) {
-        const currFile = formData.files[i];
-        files.append(`file-${i}`, currFile, currFile.name);
-      }
-
-      // Uploading the files using the fetch API to the server (temporarily with json for static)
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/scene-representation.json`,
-        {
-          method: "POST",
-          body: { files, email },
-        }
-      );
-      const hash = await res.json();
-      setHash(hash);
-    } else {
-      if (!isValidEmail) {
-        setFormErrors({ email: "Email is not valid" });
-      }
-      if (!isValidFiles) {
-        setFormErrors({ files: "Files must be more than 10" });
-      }
-    }
-  };
-
-  // set images urls when input file is updated
   createEffect(() => {
-    setImagesList(getFilesUrls(formData.files));
+    setImageList(getFilesUrls(controls.files.value));
   });
 
   return (
     <Wrapper>
-      <Slider imagesList={imagesList()} />
+      <Slider imagesList={imageList()} />
       <Container>
-        <Form onInput={handleFormChange}>
+        <Form>
           <div>
             <InputEmail
               name={`email`}
               placeholder={`Email`}
-              defaultValue={formData.email}
-              errorMessage={formErrors.email}
+              control={controls.email}
             />
             <InputFile
               name={`files`}
               placeholder={`Upload images`}
-              defaultFiles={formData.files}
-              errorMessage={formErrors.files}
+              control={controls.files}
             />
           </div>
         </Form>
         <Fieldset>
-          <InputHash name={`hash`} placeholder={`Hash`} value={hash()} />
-          <Button
-            name={`submit`}
-            placeholder={`Train`}
-            type={`button`}
-            onClick={handleFormSubmit}
+          <InputHash
+            name={`hash`}
+            placeholder={`Hash`}
+            control={controls.hash}
           />
+          <Button name={`submit`} placeholder={`Train`} type={`button`} />
         </Fieldset>
       </Container>
     </Wrapper>

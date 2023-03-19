@@ -1,37 +1,53 @@
-import { createSignal } from "solid-js";
+import { createFormControl } from "solid-forms";
+import { mergeProps, Show } from "solid-js";
 import { styled } from "solid-styled-components";
 import icon from "../../assets/image-ico.svg";
 
 const FileInput = (props) => {
-  const [files, setFiles] = createSignal(props.defaultFiles);
+  const mergedProps = mergeProps({ control: createFormControl("") }, props);
 
   // placeholder depend of num files
   const placeholder = () => {
-    const numFiles = files().length;
-    if (numFiles == 0) {
-      return props.placeholder;
+    const numFiles = mergedProps.control.value.length;
+    if (numFiles === 0) {
+      return mergedProps.placeholder;
     } else {
       return `Selected ${numFiles} image${numFiles == 1 ? "" : "s"}`;
     }
   };
 
   return (
-    <Wrapper class="wrapper-input" error={props.errorMessage}>
+    <Wrapper
+      class="wrapper-input"
+      error={props.control.isTouched && mergedProps.errorMessage}
+    >
       <Field
         type={`file`}
         placeholder={` `}
-        id={props.name}
+        name={mergedProps.name}
+        id={mergedProps.name}
+        // set value
+        files={mergedProps.control.value}
+        // eslint-disable-next-line solid/reactivity
+        onInput={(event) => {
+          mergedProps.control.setValue(event.target.files);
+        }}
+        // set is touched
+        // eslint-disable-next-line solid/reactivity
+        onChange={() => props.control.markTouched(true)}
         accept={`image/*`}
         multiple
-        onChange={(event) => setFiles(event.target.files)}
-        name={props.name}
-        files={files()}
       />
-      <Label for={props.name} class={`filesField`}>
+      <Label for={mergedProps.name} class={`filesField`}>
         <img src={icon} />
         {placeholder()}
       </Label>
-      <Message>{props.errorMessage}</Message>
+
+      <Message>
+        <Show when={props.control.isTouched && props.control.errors}>
+          {mergedProps.control.errors.errorMessage}
+        </Show>
+      </Message>
     </Wrapper>
   );
 };

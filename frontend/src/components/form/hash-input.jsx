@@ -1,15 +1,10 @@
-import { createEffect, createSignal } from "solid-js";
+import { createFormControl } from "solid-forms";
+import { mergeProps } from "solid-js";
 import { styled } from "solid-styled-components";
 import icon from "../../assets/copy-ico.svg";
 
 const HashInput = (props) => {
-  const value = () => props.value || "";
-  const [hasValue, setHasValue] = createSignal(Boolean(props.defaultValue));
-
-  createEffect(() => {
-    setHasValue(value().length !== 0);
-  });
-
+  const mergedProps = mergeProps({ control: createFormControl("") }, props);
   return (
     <Wrapper class="wrapper-input">
       <Field
@@ -17,19 +12,22 @@ const HashInput = (props) => {
         placeholder={` `}
         id={props.name}
         name={props.name}
+        // set value
+        value={mergedProps.control.value}
         // eslint-disable-next-line solid/reactivity
         onInput={(event) => {
-          event.target.value = value();
+          mergedProps.control.isReadonly
+            ? (event.target.value = mergedProps.control.value)
+            : mergedProps.control.setValue(event.target.value);
         }}
-        value={value()}
-        disabled={!hasValue()}
+        disabled={mergedProps.control.isDisabled}
       />
       <Label for={props.name}>{props.placeholder}</Label>
       <Image
+        visibility={!!mergedProps.control.value}
         src={icon}
-        visibility={hasValue()}
         // eslint-disable-next-line solid/reactivity
-        onClick={() => navigator.clipboard.writeText(value())}
+        onClick={() => navigator.clipboard.writeText(mergedProps.control.value)}
       />
     </Wrapper>
   );

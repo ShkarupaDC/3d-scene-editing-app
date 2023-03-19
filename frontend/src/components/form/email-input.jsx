@@ -1,21 +1,35 @@
-import { createSignal } from "solid-js";
+import { createFormControl } from "solid-forms";
+import { mergeProps, Show } from "solid-js";
 import { styled } from "solid-styled-components";
 
 const EmailInput = (props) => {
-  const [value, setValue] = createSignal(props.defaultValue);
+  // to save reactivity merge props
+  const mergedProps = mergeProps({ control: createFormControl("") }, props);
 
   return (
-    <Wrapper class="wrapper-input" error={props.errorMessage}>
+    <Wrapper class="wrapper-input" error={mergedProps.errorMessage}>
       <Field
         type={`email`}
-        value={value()}
         placeholder={` `}
-        id={props.name}
-        name={props.name}
-        onChange={(event) => setValue(event.target.value)}
+        id={mergedProps.name}
+        name={mergedProps.name}
+        // set value
+        value={mergedProps.control.value}
+        // eslint-disable-next-line solid/reactivity
+        onInput={(event) => {
+          mergedProps.control.setValue(event.target.value);
+        }}
+        // set is touched
+        // eslint-disable-next-line solid/reactivity
+        onBlur={() => props.control.markTouched(true)}
       />
-      <Label for={props.name}>{props.placeholder}</Label>
-      <Message>{props.errorMessage}</Message>
+      <Label for={mergedProps.name}>{mergedProps.placeholder}</Label>
+
+      <Message>
+        <Show when={props.control.isTouched && props.control.errors}>
+          {mergedProps.control.errors.errorMessage}
+        </Show>
+      </Message>
     </Wrapper>
   );
 };
