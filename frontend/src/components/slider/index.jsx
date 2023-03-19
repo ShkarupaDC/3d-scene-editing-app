@@ -10,13 +10,13 @@ const Slider = (props) => {
   let buttonNext, buttonPrev;
 
   // It will be in props in feature
-  const imagesList = () => props.imagesList || [];
+  const imageList = () => props.imageList || [];
 
-  createEffect(on(imagesList, () => setImageIndex(0)));
+  createEffect(on(imageList, () => setImageIndex(0)));
 
   // disable arrows if no data after suppose handler
   createEffect(() => {
-    const numImages = imagesList().length;
+    const numImages = imageList().length;
     // disabled both buttons if no-data or one image in data
     if (numImages <= 1) {
       buttonNext.disabled = true;
@@ -53,7 +53,7 @@ const Slider = (props) => {
 
   return (
     <Wrapper>
-      <Image src={imagesList()[imageIndex()]} />
+      <Image src={imageList()[imageIndex()]} />
       <Arrow
         type="button"
         class={`prev`}

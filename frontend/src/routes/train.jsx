@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal } from "solid-js";
+import { createEffect, createMemo } from "solid-js";
 import { styled } from "solid-styled-components";
 import { createFormGroup, createFormControl } from "solid-forms";
 import Button from "../components/form/button";
@@ -22,13 +22,32 @@ const Train = () => {
 
   const imageList = createMemo(() => getFilesUrls(controls.files.value));
 
-  createEffect(() => {
-    controls.hash.markDisabled(!controls.hash.value);
-  });
+  const handleFormSubmit = async () => {
+    if (controls.email.isValid && controls.files.isValid) {
+      // Uploading the files using the fetch API to the server (temporarily with json for static)
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/scene-representation`,
+        {
+          method: "POST",
+          body: { files: controls.files.value, email: controls.email.value },
+        }
+      );
+      const hash = await res.json();
+      controls.hash.setValue(hash);
+      controls.hash.markDisabled(!controls.hash.value);
+    } else {
+      if (!controls.email.isValid) {
+        controls.email.markTouched(true);
+      }
+      if (!controls.files.isValid) {
+        controls.files.markTouched(true);
+      }
+    }
+  };
 
   return (
     <Wrapper>
-      <Slider imagesList={imageList()} />
+      <Slider imageList={imageList()} />
       <Container>
         <Form>
           <div>
@@ -50,7 +69,12 @@ const Train = () => {
             placeholder={`Hash`}
             control={controls.hash}
           />
-          <Button name={`submit`} placeholder={`Train`} type={`button`} />
+          <Button
+            name={`submit`}
+            placeholder={`Train`}
+            type={`button`}
+            onClick={handleFormSubmit}
+          />
         </Fieldset>
       </Container>
     </Wrapper>
