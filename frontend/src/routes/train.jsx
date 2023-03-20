@@ -1,4 +1,3 @@
-import { createMemo } from "solid-js";
 import { styled } from "solid-styled-components";
 import { createFormGroup, createFormControl } from "solid-forms";
 import Button from "../components/form/button";
@@ -25,7 +24,7 @@ const Train = () => {
     hash: createFormControl("", { readonly: true, disabled: true }),
   });
 
-  const imageList = createMemo(() => getFilesUrls(controls.files.value));
+  const imageList = () => getFilesUrls(controls.files.value);
 
   const handleFormSubmit = async () => {
     if (!controls.email.isValid) {
