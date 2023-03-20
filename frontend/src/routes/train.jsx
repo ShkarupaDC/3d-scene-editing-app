@@ -6,16 +6,21 @@ import EmailInput from "../components/form/email-input";
 import HashInput from "../components/form/hash-input";
 import FileInput from "../components/form/file-input";
 import Slider from "../components/slider";
-import { validators } from "../helpers/validators";
+import { validateEmail } from "../helpers/validators";
 import { getFilesUrls } from "../helpers/getFilesUrl";
+import { sceneRepresentation } from "../api";
 
 const Train = () => {
   const { controls } = createFormGroup({
     email: createFormControl("", {
-      validators: validators.email,
+      validators: (value) =>
+        validateEmail(value) ? null : { errorMessage: "Invalid email address" },
     }),
     files: createFormControl([], {
-      validators: validators.files,
+      validators: (files) =>
+        files.length < 10
+          ? { errorMessage: "Number files must be 10 or more" }
+          : null,
     }),
     hash: createFormControl("", { readonly: true, disabled: true }),
   });
@@ -23,31 +28,14 @@ const Train = () => {
   const imageList = createMemo(() => getFilesUrls(controls.files.value));
 
   const handleFormSubmit = async () => {
-    if (controls.email.isValid && controls.files.isValid) {
-      // Uploading the files using the fetch API to the server (temporarily with json for static)
-      const formData = new FormData();
-      const files = controls.files.value;
-      for (let i = 0; i < files.length; i++) {
-        const currFile = files[i];
-        formData.append(`files`, currFile, currFile.name);
-      }
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/scene-representation`,
-        {
-          method: "POST",
-          body: { files: formData, email: controls.email.value },
-        }
-      );
-      const hash = await res.json();
-      controls.hash.setValue(hash);
-      controls.hash.markDisabled(!controls.hash.value);
+    if (!controls.email.isValid) {
+      controls.email.markTouched(true);
+    } else if (!controls.files.isValid) {
+      controls.files.markTouched(true);
     } else {
-      if (!controls.email.isValid) {
-        controls.email.markTouched(true);
-      }
-      if (!controls.files.isValid) {
-        controls.files.markTouched(true);
-      }
+      const hash = await sceneRepresentation(controls);
+      controls.hash.setValue(hash);
+      controls.hash.markDisabled(false);
     }
   };
 

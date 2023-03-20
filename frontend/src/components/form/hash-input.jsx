@@ -14,11 +14,10 @@ const HashInput = (props) => {
         name={props.name}
         // set value
         value={mergedProps.control.value}
+        readonly={mergedProps.control.isReadonly}
         // eslint-disable-next-line solid/reactivity
         onInput={(event) => {
-          mergedProps.control.isReadonly
-            ? (event.target.value = mergedProps.control.value)
-            : mergedProps.control.setValue(event.target.value);
+          mergedProps.control.setValue(event.target.value);
         }}
         disabled={mergedProps.control.isDisabled}
       />

@@ -3,53 +3,26 @@ import { styled } from "solid-styled-components";
 import arrow from "../../assets/arrow.svg";
 
 const Slider = (props) => {
-  // useState
   const [imageIndex, setImageIndex] = createSignal(0);
 
   // refs
   let buttonNext, buttonPrev;
 
-  // It will be in props in feature
   const imageList = () => props.imageList || [];
-
   createEffect(on(imageList, () => setImageIndex(0)));
 
   // disable arrows if no data after suppose handler
   createEffect(() => {
     const numImages = imageList().length;
-    // disabled both buttons if no-data or one image in data
-    if (numImages <= 1) {
-      buttonNext.disabled = true;
+    buttonPrev.disabled = false;
+    buttonNext.disabled = false;
+    if (imageIndex() === 0) {
       buttonPrev.disabled = true;
-    } else {
-      switch (imageIndex()) {
-        // if index === 0 button prev is disabled
-        case 0:
-          buttonPrev.disabled = true;
-          buttonNext.disabled = false;
-          break;
-        // if index === last index button nex is disabled
-        case numImages - 1:
-          buttonPrev.disabled = false;
-          buttonNext.disabled = true;
-          break;
-        // show both buttons
-        default:
-          buttonPrev.disabled = false;
-          buttonNext.disabled = false;
-      }
+    }
+    if (imageIndex() === numImages - 1 || numImages === 0) {
+      buttonNext.disabled = true;
     }
   });
-
-  // onClick arrow next
-  const handlerNextImage = () => {
-    setImageIndex(imageIndex() + 1);
-  };
-
-  // onClick arrow prev
-  const handlerPrevImage = () => {
-    setImageIndex(imageIndex() - 1);
-  };
 
   return (
     <Wrapper>
@@ -58,7 +31,8 @@ const Slider = (props) => {
         type="button"
         class={`prev`}
         ref={buttonPrev}
-        onClick={handlerPrevImage}
+        // eslint-disable-next-line solid/reactivity
+        onClick={() => setImageIndex(imageIndex() - 1)}
       >
         <img src={arrow} />
       </Arrow>
@@ -66,7 +40,8 @@ const Slider = (props) => {
         type="button"
         class={`next`}
         ref={buttonNext}
-        onClick={handlerNextImage}
+        // eslint-disable-next-line solid/reactivity
+        onClick={() => setImageIndex(imageIndex() + 1)}
       >
         <img src={arrow} />
       </Arrow>
