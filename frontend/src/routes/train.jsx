@@ -10,7 +10,7 @@ import { getFilesUrls } from "../helpers/getFilesUrl";
 import { sceneRepresentation } from "../api";
 
 const Train = () => {
-  const { controls } = createFormGroup({
+  const formGroup = createFormGroup({
     email: createFormControl("", {
       validators: (value) =>
         validateEmail(value) ? null : { errorMessage: "Invalid email address" },
@@ -24,17 +24,25 @@ const Train = () => {
     hash: createFormControl("", { readonly: true, disabled: true }),
   });
 
-  const imageList = () => getFilesUrls(controls.files.value);
+  const imageList = () => getFilesUrls(formGroup.controls.files.value);
 
   const handleFormSubmit = async () => {
-    if (!controls.email.isValid) {
-      controls.email.markTouched(true);
-    } else if (!controls.files.isValid) {
-      controls.files.markTouched(true);
+    console.log(formGroup.isSubmitted);
+    if (formGroup.isSubmitted) {
+      console.log("is submitted");
+      return;
+    }
+    if (!formGroup.controls.email.isValid) {
+      formGroup.controls.email.markTouched(true);
+    } else if (!formGroup.controls.files.isValid) {
+      formGroup.controls.files.markTouched(true);
     } else {
-      const hash = await sceneRepresentation(controls);
-      controls.hash.setValue(hash);
-      controls.hash.markDisabled(false);
+      formGroup.markPending(true);
+      const hash = await sceneRepresentation(formGroup.controls);
+      formGroup.controls.hash.setValue(hash);
+      formGroup.controls.hash.markDisabled(false);
+      formGroup.markSubmitted(true);
+      formGroup.markPending(false);
     }
   };
 
@@ -47,12 +55,12 @@ const Train = () => {
             <EmailInput
               name={`email`}
               placeholder={`Email`}
-              control={controls.email}
+              control={formGroup.controls.email}
             />
             <FileInput
               name={`files`}
               placeholder={`Upload images`}
-              control={controls.files}
+              control={formGroup.controls.files}
             />
           </div>
         </Form>
@@ -60,11 +68,12 @@ const Train = () => {
           <HashInput
             name={`hash`}
             placeholder={`Hash`}
-            control={controls.hash}
+            control={formGroup.controls.hash}
           />
           <Button
             name={`submit`}
             placeholder={`Train`}
+            disabled={formGroup.isPending}
             type={`button`}
             onClick={handleFormSubmit}
           />
