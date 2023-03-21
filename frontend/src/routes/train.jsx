@@ -5,44 +5,49 @@ import EmailInput from "../components/form/email-input";
 import HashInput from "../components/form/hash-input";
 import FileInput from "../components/form/file-input";
 import Slider from "../components/slider";
-import { validateEmail } from "../helpers/validators";
-import { getFilesUrls } from "../helpers/getFilesUrl";
-import { sceneRepresentation } from "../api";
+import { getFilesUrls, validateEmail } from "../helpers";
+import { postTrain } from "../api";
+import { config } from "../config";
 
 const Train = () => {
-  const formGroup = createFormGroup({
+  const group = createFormGroup({
     email: createFormControl("", {
       validators: (value) =>
         validateEmail(value) ? null : { errorMessage: "Invalid email address" },
     }),
     files: createFormControl([], {
       validators: (files) =>
-        files.length < 10
-          ? { errorMessage: "Number files must be 10 or more" }
+        files.length < config.minFiles
+          ? { errorMessage: `Number files must be ${config.minFiles} or more` }
           : null,
     }),
     hash: createFormControl("", { readonly: true, disabled: true }),
   });
 
-  const imageList = () => getFilesUrls(formGroup.controls.files.value);
+  const imageList = () => getFilesUrls(group.controls.files.value);
 
   const handleFormSubmit = async () => {
-    console.log(formGroup.isSubmitted);
-    if (formGroup.isSubmitted) {
-      console.log("is submitted");
+    if (group.isSubmitted) {
       return;
     }
-    if (!formGroup.controls.email.isValid) {
-      formGroup.controls.email.markTouched(true);
-    } else if (!formGroup.controls.files.isValid) {
-      formGroup.controls.files.markTouched(true);
+    if (!group.controls.email.isValid) {
+      group.controls.email.markTouched(true);
+    } else if (!group.controls.files.isValid) {
+      group.controls.files.markTouched(true);
     } else {
-      formGroup.markPending(true);
-      const hash = await sceneRepresentation(formGroup.controls);
-      formGroup.controls.hash.setValue(hash);
-      formGroup.controls.hash.markDisabled(false);
-      formGroup.markSubmitted(true);
-      formGroup.markPending(false);
+      // temp const
+      const isMock = true;
+
+      group.markPending(true);
+      const hash = await postTrain(
+        group.controls.email.value,
+        group.controls.files.value,
+        isMock
+      );
+      group.controls.hash.setValue(hash);
+      group.controls.hash.markDisabled(false);
+      group.markSubmitted(true);
+      group.markPending(false);
     }
   };
 
@@ -55,12 +60,12 @@ const Train = () => {
             <EmailInput
               name={`email`}
               placeholder={`Email`}
-              control={formGroup.controls.email}
+              control={group.controls.email}
             />
             <FileInput
               name={`files`}
               placeholder={`Upload images`}
-              control={formGroup.controls.files}
+              control={group.controls.files}
             />
           </div>
         </Form>
@@ -68,12 +73,12 @@ const Train = () => {
           <HashInput
             name={`hash`}
             placeholder={`Hash`}
-            control={formGroup.controls.hash}
+            control={group.controls.hash}
           />
           <Button
             name={`submit`}
             placeholder={`Train`}
-            disabled={formGroup.isPending}
+            disabled={group.isPending}
             type={`button`}
             onClick={handleFormSubmit}
           />
