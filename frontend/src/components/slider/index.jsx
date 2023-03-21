@@ -14,13 +14,13 @@ const Slider = (props) => {
   // disable arrows if no data after suppose handler
   createEffect(() => {
     const numImages = imageList().length;
-    buttonPrev.disabled = false;
-    buttonNext.disabled = false;
-    if (imageIndex() === 0) {
-      buttonPrev.disabled = true;
+    buttonPrev.disabled = true;
+    buttonNext.disabled = true;
+    if (imageIndex() !== 0) {
+      buttonPrev.disabled = false;
     }
-    if (imageIndex() === numImages - 1 || numImages === 0) {
-      buttonNext.disabled = true;
+    if (imageIndex() < numImages - 1) {
+      buttonNext.disabled = false;
     }
   });
 
