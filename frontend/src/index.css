@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap");
 
 *,
 *::before,
@@ -15,8 +15,7 @@ body,
   font-weight: 500;
 }
 
-
-.wrapper-input{
+.wrapper-input {
   position: relative;
 }
 
@@ -27,6 +26,8 @@ body,
 
 fieldset {
   border: none;
+  margin: 0;
+  padding: 0;
 }
 
 input,
@@ -47,7 +48,7 @@ button {
 input:disabled ~ label,
 input:disabled,
 button:disabled {
-  color:#ccc;
+  color: #ccc;
   border-color: #ccc;
 }
 

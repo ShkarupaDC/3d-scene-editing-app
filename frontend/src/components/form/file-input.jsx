@@ -26,13 +26,11 @@ const FileInput = (props) => {
         placeholder={` `}
         name={mergedProps.name}
         id={mergedProps.name}
-        // set value
         files={mergedProps.control.value}
         // eslint-disable-next-line solid/reactivity
         onInput={(event) => {
           mergedProps.control.setValue(event.target.files);
         }}
-        // set is touched
         // eslint-disable-next-line solid/reactivity
         onChange={() => props.control.markTouched(true)}
         accept={`image/*`}

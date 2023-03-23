@@ -12,7 +12,6 @@ const HashInput = (props) => {
         placeholder={` `}
         id={props.name}
         name={props.name}
-        // set value
         value={mergedProps.control.value}
         readonly={mergedProps.control.isReadonly}
         // eslint-disable-next-line solid/reactivity

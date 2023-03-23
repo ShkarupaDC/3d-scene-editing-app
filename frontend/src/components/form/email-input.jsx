@@ -1,9 +1,8 @@
 import { createFormControl } from "solid-forms";
-import { mergeProps, Show } from "solid-js";
+import { createEffect, mergeProps, Show } from "solid-js";
 import { styled } from "solid-styled-components";
 
 const EmailInput = (props) => {
-  // to save reactivity merge props
   const mergedProps = mergeProps({ control: createFormControl("") }, props);
 
   return (
@@ -13,13 +12,11 @@ const EmailInput = (props) => {
         placeholder={` `}
         id={mergedProps.name}
         name={mergedProps.name}
-        // set value
         value={mergedProps.control.value}
         // eslint-disable-next-line solid/reactivity
         onInput={(event) => {
           mergedProps.control.setValue(event.target.value);
         }}
-        // set is touched
         // eslint-disable-next-line solid/reactivity
         onBlur={() => props.control.markTouched(true)}
       />

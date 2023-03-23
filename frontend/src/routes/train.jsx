@@ -13,12 +13,16 @@ const Train = () => {
   const group = createFormGroup({
     email: createFormControl("", {
       validators: (value) =>
-        validateEmail(value) ? null : { errorMessage: "Invalid email address" },
+        validateEmail(value)
+          ? null
+          : { errorMessage: "Email address is invalid" },
     }),
     files: createFormControl([], {
       validators: (files) =>
         files.length < config.minFiles
-          ? { errorMessage: `Number files must be ${config.minFiles} or more` }
+          ? {
+              errorMessage: `There must be ${config.minFiles} images or more to start training`,
+            }
           : null,
     }),
     hash: createFormControl("", { readonly: true, disabled: true }),
