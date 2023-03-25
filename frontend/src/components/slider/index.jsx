@@ -53,17 +53,17 @@ export default Slider;
 
 const Wrapper = styled("div")`
   width: 678px;
-  display: flex;
   aspect-ratio: 4 / 3;
   background: var(--secondaryColor);
   position: relative;
+  display: flex;
   justify-content: center;
-  align-content: center;
 `;
 
 const Image = styled("img")`
   max-width: 100%;
   max-height: 100%;
+  align-self: center;
 `;
 
 const Arrow = styled("button")`
