@@ -173,4 +173,4 @@ ${e}. Is your HTML properly formed?`;let s=n.content.firstChild;return r&&(s=s.f
   justify-content: center;
   min-height: calc(100vh - var(--headerHeight));
   width: calc(100% - 2 * var(--outsidePadding));
-`,cs=document.getElementById("root");cr(()=>w(Xr,{source:"/3d-scene-editing-app",get children(){return w(is,{})}}),cs);
+`,cs=document.getElementById("root");cr(()=>w(Xr,{base:"3d-scene-editing-app",get children(){return w(is,{})}}),cs);
