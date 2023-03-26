@@ -1,14 +1,14 @@
 import { createFormControl } from "solid-forms";
 import { mergeProps, onMount, Show } from "solid-js";
 import { styled } from "solid-styled-components";
-import { getValue } from "../../helpers";
+import { updateValue } from "../../helpers";
 
 const EmailInput = (props) => {
   const mergedProps = mergeProps({ control: createFormControl("") }, props);
 
   onMount(() => {
     mergedProps.control.setValue(
-      getValue(mergedProps.name, mergedProps.control.value)
+      updateValue(mergedProps.name, mergedProps.control.value)
     );
   });
 

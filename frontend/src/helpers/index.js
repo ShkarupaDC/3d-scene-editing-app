@@ -10,7 +10,7 @@ export const validateEmail = (value) =>
     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   );
 
-export const getValue = (name, defaultValue) => {
+export const updateValueLS = (name, defaultValue) => {
   const value = localStorage.getItem(name);
   if (value) {
     return value;
