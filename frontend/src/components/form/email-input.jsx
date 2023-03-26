@@ -1,9 +1,16 @@
 import { createFormControl } from "solid-forms";
-import { mergeProps, Show } from "solid-js";
+import { mergeProps, onMount, Show } from "solid-js";
 import { styled } from "solid-styled-components";
+import { getValue } from "../../helpers";
 
 const EmailInput = (props) => {
   const mergedProps = mergeProps({ control: createFormControl("") }, props);
+
+  onMount(() => {
+    mergedProps.control.setValue(
+      getValue(mergedProps.name, mergedProps.control.value)
+    );
+  });
 
   return (
     <Wrapper class="wrapper-input" error={mergedProps.errorMessage}>
@@ -16,6 +23,7 @@ const EmailInput = (props) => {
         // eslint-disable-next-line solid/reactivity
         onInput={(event) => {
           mergedProps.control.setValue(event.target.value);
+          localStorage.setItem(mergedProps.name, mergedProps.control.value);
         }}
         // eslint-disable-next-line solid/reactivity
         onBlur={() => props.control.markTouched(true)}

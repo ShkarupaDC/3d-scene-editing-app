@@ -82,7 +82,7 @@ const Train = () => {
           <Button
             name={`submit`}
             placeholder={`Train`}
-            disabled={group.isPending}
+            disabled={group.isPending || group.isSubmitted}
             type={`button`}
             onClick={handleFormSubmit}
           />
