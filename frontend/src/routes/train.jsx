@@ -8,6 +8,7 @@ import Slider from "../components/slider";
 import { getFilesUrls, validateEmail } from "../helpers";
 import { postTrain } from "../api";
 import { config } from "../config";
+import { onMount } from "solid-js";
 
 const Train = () => {
   const group = createFormGroup({
@@ -26,6 +27,13 @@ const Train = () => {
           : null,
     }),
     hash: createFormControl("", { readonly: true, disabled: true }),
+  });
+
+  onMount(() => {
+    // set email from localStorage
+    group.controls.email.setValue(
+      localStorage.getItem("email") ?? group.controls.email.value
+    );
   });
 
   const imageList = () => getFilesUrls(group.controls.files.value);

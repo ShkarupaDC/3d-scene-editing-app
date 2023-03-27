@@ -33,7 +33,7 @@ const FileInput = (props) => {
         }}
         // eslint-disable-next-line solid/reactivity
         onChange={() => props.control.markTouched(true)}
-        accept={`image/*`}
+        accept={`image/png, image/jpeg`}
         multiple
       />
       <Label for={mergedProps.name} class={`filesField`}>
