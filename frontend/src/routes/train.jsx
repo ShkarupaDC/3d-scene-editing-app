@@ -8,10 +8,9 @@ import Slider from "../components/slider";
 import { getFilesUrls, validateEmail } from "../helpers";
 import { postTrain } from "../api";
 import { config } from "../config";
-import { createEffect, onMount } from "solid-js";
-import { db } from "../config";
+import { onMount } from "solid-js";
 
-const Train = () => {
+const Train = (props) => {
   const group = createFormGroup({
     email: createFormControl("", {
       validators: (value) =>
@@ -31,11 +30,20 @@ const Train = () => {
   });
 
   onMount(async () => {
+    // create IDB store
+    props.db.version(2).stores({
+      images: "++id, image",
+    });
+
     // set email from localStorage
     group.controls.email.setValue(
       localStorage.getItem("email") ?? group.controls.email.value
     );
-    group.controls.files.setValue(await db.images.toArray());
+
+    // set files in IDB
+    group.controls.files.setValue(
+      (await props.db.images?.toArray()) ?? group.controls.files.value
+    );
   });
 
   const imageList = () => getFilesUrls(group.controls.files.value);
@@ -64,17 +72,12 @@ const Train = () => {
     }
   };
 
-  createEffect(() => {
-    console.log(group.controls.email.value);
-    localStorage.setItem("email", group.controls.email.value);
-  });
-
-  createEffect(() => {
-    db.images.clear();
-    Object.values(group.controls.files.value).map((file) =>
-      db.images.add(file)
-    );
-  });
+  const addFilesToIDB = () => {
+    props.db.images.clear();
+    Object.values(group.controls.files.value).map((file) => {
+      props.db.images.add(file);
+    });
+  };
 
   return (
     <Wrapper>
@@ -86,11 +89,15 @@ const Train = () => {
               name={`email`}
               placeholder={`Email`}
               control={group.controls.email}
+              onInputHandler={() =>
+                localStorage.setItem("email", group.controls.email.value)
+              }
             />
             <FileInput
               name={`files`}
               placeholder={`Upload images`}
               control={group.controls.files}
+              onInputHandler={addFilesToIDB}
             />
           </div>
         </Form>

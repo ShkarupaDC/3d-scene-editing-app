@@ -30,6 +30,7 @@ const FileInput = (props) => {
         // eslint-disable-next-line solid/reactivity
         onInput={(event) => {
           mergedProps.control.setValue(event.target.files);
+          props.onInputHandler();
         }}
         // eslint-disable-next-line solid/reactivity
         onChange={() => props.control.markTouched(true)}
