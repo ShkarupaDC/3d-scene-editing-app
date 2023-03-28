@@ -8,7 +8,7 @@ import Slider from "../components/slider";
 import { getFilesUrls, validateEmail } from "../helpers";
 import { postTrain } from "../api";
 import { config } from "../config";
-import { onMount } from "solid-js";
+import { createEffect, onMount } from "solid-js";
 import { db } from "../config";
 
 const Train = () => {
@@ -35,7 +35,7 @@ const Train = () => {
     group.controls.email.setValue(
       localStorage.getItem("email") ?? group.controls.email.value
     );
-    console.log(await db.images.toArray());
+    group.controls.files.setValue(await db.images.toArray());
   });
 
   const imageList = () => getFilesUrls(group.controls.files.value);
@@ -63,6 +63,18 @@ const Train = () => {
       group.markPending(false);
     }
   };
+
+  createEffect(() => {
+    console.log(group.controls.email.value);
+    localStorage.setItem("email", group.controls.email.value);
+  });
+
+  createEffect(() => {
+    db.images.clear();
+    Object.values(group.controls.files.value).map((file) =>
+      db.images.add(file)
+    );
+  });
 
   return (
     <Wrapper>

@@ -7,7 +7,6 @@
   "dependencies": {
     "@solidjs/router": "^0.7.0",
     "dexie": "^3.2.3",
-    "solid-dexie": "^0.0.5",
     "solid-forms": "^0.4.8",
     "solid-js": "^1.6.15",
     "solid-styled-components": "^0.28.5",
