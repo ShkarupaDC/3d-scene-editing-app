@@ -16,7 +16,6 @@ const EmailInput = (props) => {
         // eslint-disable-next-line solid/reactivity
         onInput={(event) => {
           mergedProps.control.setValue(event.target.value);
-          localStorage.setItem(mergedProps.name, mergedProps.control.value);
         }}
         // eslint-disable-next-line solid/reactivity
         onBlur={() => props.control.markTouched(true)}

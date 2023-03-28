@@ -9,6 +9,7 @@ import { getFilesUrls, validateEmail } from "../helpers";
 import { postTrain } from "../api";
 import { config } from "../config";
 import { onMount } from "solid-js";
+import { db } from "../config";
 
 const Train = () => {
   const group = createFormGroup({
@@ -29,11 +30,12 @@ const Train = () => {
     hash: createFormControl("", { readonly: true, disabled: true }),
   });
 
-  onMount(() => {
+  onMount(async () => {
     // set email from localStorage
     group.controls.email.setValue(
       localStorage.getItem("email") ?? group.controls.email.value
     );
+    console.log(await db.images.toArray());
   });
 
   const imageList = () => getFilesUrls(group.controls.files.value);
@@ -48,13 +50,12 @@ const Train = () => {
       group.controls.files.markTouched(true);
     } else {
       // temp const
-      const isMock = true;
 
       group.markPending(true);
       const hash = await postTrain(
         group.controls.email.value,
         group.controls.files.value,
-        isMock
+        config.useMock
       );
       group.controls.hash.setValue(hash);
       group.controls.hash.markDisabled(false);

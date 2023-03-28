@@ -1,5 +1,5 @@
-export const postTrain = async (email, files, isMock) => {
-  if (isMock) {
+export const postTrain = async (email, files, useMock) => {
+  if (useMock) {
     return new Promise((resolve) => {
       setTimeout(() => resolve("3123ac123bd12cc"), 1000);
     });
@@ -15,5 +15,5 @@ export const postTrain = async (email, files, isMock) => {
       body: { files: formData, email },
     }
   );
-  return await res.json();
+  return res.json();
 };
