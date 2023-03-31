@@ -9,8 +9,9 @@ import { getFilesUrls, validateEmail } from "../helpers";
 import { postTrain } from "../api";
 import { config } from "../config";
 import { onMount } from "solid-js";
+import { database } from "../database";
 
-const Train = (props) => {
+const Train = () => {
   const group = createFormGroup({
     email: createFormControl("", {
       validators: (value) =>
@@ -31,7 +32,7 @@ const Train = (props) => {
 
   onMount(async () => {
     // create IDB store
-    props.db.version(2).stores({
+    database.trainImages.version(2).stores({
       images: "++id, image",
     });
 
@@ -42,7 +43,8 @@ const Train = (props) => {
 
     // set files in IDB
     group.controls.files.setValue(
-      (await props.db.images?.toArray()) ?? group.controls.files.value
+      (await database.trainImages.images?.toArray()) ??
+        group.controls.files.value
     );
   });
 
@@ -73,9 +75,9 @@ const Train = (props) => {
   };
 
   const addFilesToIDB = () => {
-    props.db.images.clear();
+    database.trainImages.images.clear();
     Object.values(group.controls.files.value).map((file) => {
-      props.db.images.add(file);
+      database.trainImages.images.add(file);
     });
   };
 
