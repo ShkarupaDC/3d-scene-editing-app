@@ -1,4 +1,4 @@
-import { onMount, onCleanup } from "solid-js";
+import { onMount } from "solid-js";
 import { styled } from "solid-styled-components";
 import { createFormGroup, createFormControl } from "solid-forms";
 import Button from "../components/form/button";
