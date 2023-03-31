@@ -3,12 +3,15 @@ import Header from "./components/header";
 import Edit from "./routes/edit";
 import Train from "./routes/train";
 import { createGlobalStyles, styled } from "solid-styled-components";
+import Dexie from "dexie";
 
 const App = () => {
   const navLinks = [
     { name: `Train`, href: `/train` },
     { name: `Edit`, href: `/edit` },
   ];
+
+  const db = new Dexie("database");
 
   return (
     <>
@@ -17,7 +20,7 @@ const App = () => {
       <Content>
         <Routes>
           <Route path="/" element={<Navigate href={`/train`} />} />
-          <Route path="/train" component={Train} />
+          <Route path="/train" element={<Train db={db} />} />
           <Route path="/edit" component={Edit} />
         </Routes>
       </Content>

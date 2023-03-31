@@ -1,3 +1,4 @@
+import { onMount, onCleanup } from "solid-js";
 import { styled } from "solid-styled-components";
 import { createFormGroup, createFormControl } from "solid-forms";
 import Button from "../components/form/button";
@@ -8,10 +9,8 @@ import Slider from "../components/slider";
 import { getFilesUrls, validateEmail } from "../helpers";
 import { postTrain } from "../api";
 import { config } from "../config";
-import { onMount } from "solid-js";
-import { database } from "../database";
 
-const Train = () => {
+const Train = (props) => {
   const group = createFormGroup({
     email: createFormControl("", {
       validators: (value) =>
@@ -31,10 +30,12 @@ const Train = () => {
   });
 
   onMount(async () => {
-    // create IDB store
-    database.trainImages.version(2).stores({
-      images: "++id, image",
-    });
+    if (!props.db.train_images) {
+      // create IDB store
+      props.db.version(2).stores({
+        train_images: "++id, image",
+      });
+    }
 
     // set email from localStorage
     group.controls.email.setValue(
@@ -43,8 +44,7 @@ const Train = () => {
 
     // set files in IDB
     group.controls.files.setValue(
-      (await database.trainImages.images?.toArray()) ??
-        group.controls.files.value
+      (await props.db.train_images.toArray()) ?? group.controls.files.value
     );
   });
 
@@ -59,8 +59,6 @@ const Train = () => {
     } else if (!group.controls.files.isValid) {
       group.controls.files.markTouched(true);
     } else {
-      // temp const
-
       group.markPending(true);
       const hash = await postTrain(
         group.controls.email.value,
@@ -75,9 +73,9 @@ const Train = () => {
   };
 
   const addFilesToIDB = () => {
-    database.trainImages.images.clear();
+    props.db.train_images.clear();
     Object.values(group.controls.files.value).map((file) => {
-      database.trainImages.images.add(file);
+      props.db.train_images.add(file);
     });
   };
 
