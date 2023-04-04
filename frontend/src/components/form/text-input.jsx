@@ -2,13 +2,13 @@ import { createFormControl } from "solid-forms";
 import { mergeProps, Show } from "solid-js";
 import { styled } from "solid-styled-components";
 
-const EmailInput = (props) => {
+const TextInput = (props) => {
   const mergedProps = mergeProps({ control: createFormControl("") }, props);
 
   return (
     <Wrapper class="wrapper-input" error={mergedProps.errorMessage}>
       <Field
-        type={`email`}
+        type={mergedProps.type}
         placeholder={` `}
         id={mergedProps.name}
         name={mergedProps.name}
@@ -32,7 +32,7 @@ const EmailInput = (props) => {
   );
 };
 
-export default EmailInput;
+export default TextInput;
 
 const Wrapper = styled("div")`
   input {

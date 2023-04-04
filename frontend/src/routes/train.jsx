@@ -1,16 +1,14 @@
 import { onMount } from "solid-js";
 import { styled } from "solid-styled-components";
-import { createFormGroup, createFormControl } from "solid-forms";
-import Button from "../components/form/button";
-import EmailInput from "../components/form/email-input";
-import HashInput from "../components/form/hash-input";
-import FileInput from "../components/form/file-input";
-import Slider from "../components/slider";
-import { getFilesUrls, validateEmail } from "../helpers";
-import { postTrain } from "../api";
+import { createFormControl, createFormGroup } from "solid-forms";
+import { validateEmail, validateGoogleDiskLink } from "../helpers";
 import { config } from "../config";
+import TextInput from "../components/form/text-input";
+import HashInput from "../components/form/hash-input";
+import Button from "../components/form/button";
+import { postTrain } from "../api";
 
-const Train = (props) => {
+const Train = () => {
   const group = createFormGroup({
     email: createFormControl("", {
       validators: (value) =>
@@ -18,37 +16,30 @@ const Train = (props) => {
           ? null
           : { errorMessage: "Email address is invalid" },
     }),
-    files: createFormControl([], {
-      validators: (files) =>
-        files.length < config.minFiles
-          ? {
-              errorMessage: `There must be ${config.minFiles} images or more to start training`,
-            }
-          : null,
+    googleDiskLink: createFormControl("", {
+      validators: (value) =>
+        validateGoogleDiskLink(value)
+          ? null
+          : {
+              errorMessage: `There must be link on Google Disk folder`,
+            },
     }),
     hash: createFormControl("", { readonly: true, disabled: true }),
   });
 
   onMount(async () => {
-    if (!props.db.train_images) {
-      // create IDB store
-      props.db.version(2).stores({
-        train_images: "++id, image",
-      });
+    // set email from localStorage
+    if (localStorage.getItem("email")) {
+      group.controls.email.setValue(localStorage.getItem("email"));
     }
 
     // set email from localStorage
-    group.controls.email.setValue(
-      localStorage.getItem("email") ?? group.controls.email.value
-    );
-
-    // set files in IDB
-    group.controls.files.setValue(
-      (await props.db.train_images.toArray()) ?? group.controls.files.value
-    );
+    if (localStorage.getItem("googleDiskLink")) {
+      group.controls.googleDiskLink.setValue(
+        localStorage.getItem("googleDiskLink")
+      );
+    }
   });
-
-  const imageList = () => getFilesUrls(group.controls.files.value);
 
   const handleFormSubmit = async () => {
     if (group.isSubmitted) {
@@ -56,13 +47,13 @@ const Train = (props) => {
     }
     if (!group.controls.email.isValid) {
       group.controls.email.markTouched(true);
-    } else if (!group.controls.files.isValid) {
-      group.controls.files.markTouched(true);
+    } else if (!group.controls.googleDiskLink.isValid) {
+      group.controls.googleDiskLink.markTouched(true);
     } else {
       group.markPending(true);
       const hash = await postTrain(
         group.controls.email.value,
-        group.controls.files.value,
+        group.controls.googleDiskLink.value,
         config.useMock
       );
       group.controls.hash.setValue(hash);
@@ -72,32 +63,31 @@ const Train = (props) => {
     }
   };
 
-  const addFilesToIDB = () => {
-    props.db.train_images.clear();
-    Object.values(group.controls.files.value).map((file) => {
-      props.db.train_images.add(file);
-    });
-  };
-
   return (
     <Wrapper>
-      <Slider imageList={imageList()} />
       <Container>
         <Form>
           <div>
-            <EmailInput
+            <TextInput
               name={`email`}
+              type={`email`}
               placeholder={`Email`}
               control={group.controls.email}
               onInputHandler={() =>
                 localStorage.setItem("email", group.controls.email.value)
               }
             />
-            <FileInput
-              name={`files`}
-              placeholder={`Upload images`}
-              control={group.controls.files}
-              onInputHandler={addFilesToIDB}
+            <TextInput
+              name={`googleDiskLink`}
+              type={`text`}
+              placeholder={`Google Disk folder`}
+              control={group.controls.googleDiskLink}
+              onInputHandler={() =>
+                localStorage.setItem(
+                  "googleDiskLink",
+                  group.controls.googleDiskLink.value
+                )
+              }
             />
           </div>
         </Form>
@@ -131,7 +121,6 @@ const Form = styled("form")``;
 
 const Fieldset = styled("fieldset")`
   display: flex;
-  position: absolute;
   bottom: 0;
   width: 100%;
   input {
