@@ -38,7 +38,7 @@ const Wrapper = styled("div")``;
 const Field = styled("input")`
   border: 2px solid var(--mainColor);
   border-right: none;
-  padding-left: 40px;
+  padding-left: ${(props) => (props.value ? "40px" : "8px")};
 `;
 
 const Label = styled("label")`
