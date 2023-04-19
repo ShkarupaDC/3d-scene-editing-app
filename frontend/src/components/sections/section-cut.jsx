@@ -6,7 +6,7 @@ import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader";
 import HashInput from "../form/hash-input";
 import NumberInput from "../form/number-input";
 import Button from "../form/button";
-import { addMesh } from "../../helpers";
+import { addMesh, getBoxCenter, getBoxSize } from "../../helpers";
 import { createEffect, createSignal } from "solid-js";
 
 const SectionCut = () => {
@@ -22,16 +22,16 @@ const SectionCut = () => {
 
   const [min, setMin] = createSignal(
     new THREE.Vector3(
-      +group.controls.xMin.value,
-      +group.controls.yMin.value,
-      +group.controls.zMin.value
+      group.controls.xMin.value,
+      group.controls.yMin.value,
+      group.controls.zMin.value
     )
   );
   const [max, setMax] = createSignal(
     new THREE.Vector3(
-      +group.controls.xMax.value,
-      +group.controls.yMax.value,
-      +group.controls.zMax.value
+      group.controls.xMax.value,
+      group.controls.yMax.value,
+      group.controls.zMax.value
     )
   );
 
@@ -44,7 +44,7 @@ const SectionCut = () => {
   scene.background = new THREE.Color(0xd0d0d0);
 
   // creating camera
-  const camera = new THREE.PerspectiveCamera(75, 4 / 3, 0.1, 1000);
+  const camera = new THREE.PerspectiveCamera(50, 4 / 3, 0.1, 1000);
   camera.position.set(2, 2, 2);
   camera.lookAt(0, 0, 0);
 
@@ -57,7 +57,6 @@ const SectionCut = () => {
   scene.add(helper);
 
   createEffect(() => {
-    console.log(group.controls.xMin.value);
     setMin(
       new THREE.Vector3(
         group.controls.xMin.value,
@@ -75,7 +74,10 @@ const SectionCut = () => {
   });
 
   createEffect(() => {
-    helper.box.setFromCenterAndSize(min(), max());
+    helper.box.setFromCenterAndSize(
+      getBoxCenter(min(), max()),
+      getBoxSize(min(), max())
+    );
     console.log(helper);
   });
 

@@ -30,3 +30,15 @@ export const addMesh = (loader, scene, hash) => {
     }
   );
 };
+
+export const getBoxCenter = (min, max) => {
+  return new THREE.Vector3(
+    (min.x + max.x) / 2,
+    (min.y + max.y) / 2,
+    (min.z + max.z) / 2
+  );
+};
+
+export const getBoxSize = (min, max) => {
+  return new THREE.Vector3(max.x - min.x, max.y - min.y, max.z - min.z);
+};
