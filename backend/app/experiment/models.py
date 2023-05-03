@@ -1,8 +1,8 @@
 import json
 from typing import List, Dict, Any, Annotated
 
-from fastapi import UploadFile, Form, File
-from pydantic import BaseModel, validator, root_validator
+from fastapi import UploadFile, Form, File, HTTPException
+from pydantic import BaseModel, validator, root_validator, ValidationError
 
 from app.experiment.common import Camera, DatasetType, Matrix, ImageSize
 
@@ -54,9 +54,9 @@ class EditImageMasksModel(EditModel):
     cameras: Cameras
 
     @root_validator(skip_on_failure=True)
-    def check_masks(cls, values: Dict[str, Any]) -> None:
+    def check_masks(cls, values: Dict[str, Any]) -> Dict[str, Any]:
         if len(values["image_masks"]) != len(values["cameras"]):
-            raise RuntimeError(
+            raise ValueError(
                 "The number of image masks and cameras must be the same")
         return values
 
@@ -68,11 +68,15 @@ class EditImageMasksModel(EditModel):
                                          File()], cameras: Annotated[Cameras,
                                                                      Form()],
                   inner_region: Annotated[bool, Form()]) -> None:
-        return cls(email=email,
-                   base_experiment_id=base_experiment_id,
-                   image_masks=image_masks,
-                   cameras=cameras.cameras,
-                   inner_region=inner_region)
+        try:
+            return cls(email=email,
+                       base_experiment_id=base_experiment_id,
+                       image_masks=image_masks,
+                       cameras=cameras.cameras,
+                       inner_region=inner_region)
+        # https://github.com/tiangolo/fastapi/issues/1474#issuecomment-803021344
+        except ValidationError as exc:
+            raise HTTPException(status_code=422, detail=exc.errors())
 
 
 class SceneModel(BaseModel):
