@@ -1,0 +1,4 @@
+[submodule "backend/nn/ccnerf"]
+	path = backend/nn/ccnerf
+	url = https://github.com/ShkarupaDC/CCNeRF
+	branch = stable

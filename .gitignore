@@ -1,0 +1,14 @@
+# Environment variables
+.env
+
+# Virtual environment
+.venv
+
+# IDE
+.vscode
+
+# Python
+__pycache__
+
+# Backend
+/backend/experiments
