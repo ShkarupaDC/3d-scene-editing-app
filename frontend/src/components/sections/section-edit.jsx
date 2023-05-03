@@ -8,6 +8,7 @@ import NumberInput from "../form/number-input";
 import Button from "../form/button";
 import { addMesh, getBoxCenter, getBoxSize } from "../../helpers";
 import { createEffect, createSignal } from "solid-js";
+import Header from "../header";
 
 const SectionCut = () => {
   const group = createFormGroup({
@@ -39,8 +40,6 @@ const SectionCut = () => {
 
   // creating scene
   const scene = new THREE.Scene();
-  const axesHelper = new THREE.AxesHelper(3);
-  scene.add(axesHelper);
   scene.background = new THREE.Color(0xd0d0d0);
 
   // creating camera
@@ -92,26 +91,26 @@ const SectionCut = () => {
     return renderer.domElement;
   };
 
+  const postAABB = async () => {
+    await fetch(`${import.meta.env.VITE_API_URL}/AABB`, {
+      method: "POST",
+      body: {
+        aabb: [
+          [min().x, min().y, min().z],
+          [max().x, max().y, max().z],
+        ],
+        hash: group.controls.hash.value,
+        inner: false,
+      },
+    });
+  };
+
   return (
-    <Wrapper>
-      <div>
+    <>
+      <Header text="Edit mesh" />
+      <Wrapper>
         <div>{getThreeDom()}</div>
-        <Fieldset left>
-          <HashInput
-            name={`hash`}
-            placeholder={`Hash`}
-            control={group.controls.hash}
-          />
-          <Button
-            name={`submit`}
-            placeholder={`Load`}
-            type={`button`}
-            onClick={() => addMesh(loader, scene, group.controls.hash.value)}
-          />
-        </Fieldset>
-      </div>
-      <div>
-        <Wrapper>
+        <Sidebar>
           <Fieldset>
             <NumberInput
               name={`xMin`}
@@ -146,17 +145,37 @@ const SectionCut = () => {
               control={group.controls.zMax}
             />
           </Fieldset>
-        </Wrapper>
-      </div>
-    </Wrapper>
+        </Sidebar>
+        <Fieldset left>
+          <HashInput
+            name={`hash`}
+            placeholder={`Hash`}
+            control={group.controls.hash}
+          />
+          <Button
+            name={`submit`}
+            placeholder={`Load`}
+            type={`button`}
+            onClick={() => addMesh(loader, scene, group.controls.hash.value)}
+          />
+        </Fieldset>
+        <Button
+          name={`apply`}
+          placeholder={`Apply`}
+          type={`button`}
+          onClick={postAABB}
+        />
+      </Wrapper>
+    </>
   );
 };
 
 export default SectionCut;
 
 const Wrapper = styled("section")`
+  justify-content: center;
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: 1000px 256px;
   gap: 32px;
 `;
 
@@ -169,4 +188,9 @@ const Fieldset = styled("fieldset")`
   button {
     width: 128px;
   }
+`;
+
+const Sidebar = styled("div")`
+  display: grid;
+  grid-template-columns: auto auto;
 `;
