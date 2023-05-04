@@ -44,7 +44,7 @@ const SectionCompose = () => {
 
   return (
     <>
-      <Header text="Composing meshes" />
+      <Header text="Compose mesh" />
       <Wrapper>
         <div>{getThreeDom()}</div>
         <Sidebar>
@@ -61,11 +61,6 @@ const SectionCompose = () => {
               onClick={() => addMesh(loader, scene, group.controls.hash.value)}
             />
           </Fieldset>
-          <TextInput
-            name={`image`}
-            placeholder={`Image ID`}
-            control={group.controls.imageID}
-          />
           <BottomWrapper>
             <Button
               name={`submit`}
@@ -85,7 +80,7 @@ export default SectionCompose;
 const Wrapper = styled("section")`
   justify-content: center;
   display: grid;
-  grid-template-columns: 1000px 256px;
+  grid-template-columns: 800px 448px;
   gap: 32px;
   input: {
     width: 100%;

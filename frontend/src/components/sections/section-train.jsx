@@ -1,7 +1,6 @@
-import { onMount } from "solid-js";
 import { styled } from "solid-styled-components";
 import { createFormControl, createFormGroup } from "solid-forms";
-import { validateEmail, validateGoogleDiskLink } from "../../helpers";
+import { validateEmail, validateGoogleDriveLink } from "../../helpers";
 import { config } from "../../config";
 import TextInput from "../form/text-input";
 import HashInput from "../form/hash-input";
@@ -17,29 +16,15 @@ const SectionTrain = () => {
           ? null
           : { errorMessage: "Email address is invalid" },
     }),
-    googleDiskLink: createFormControl("", {
+    googleDriveLink: createFormControl("", {
       validators: (value) =>
-        validateGoogleDiskLink(value)
+        validateGoogleDriveLink(value)
           ? null
           : {
-              errorMessage: `There must be link on Google Disk folder`,
+              errorMessage: `There must be link on Google Drive folder`,
             },
     }),
     hash: createFormControl("", { readonly: true, disabled: true }),
-  });
-
-  onMount(async () => {
-    // set email from localStorage
-    if (localStorage.getItem("email")) {
-      group.controls.email.setValue(localStorage.getItem("email"));
-    }
-
-    // set email from localStorage
-    if (localStorage.getItem("googleDiskLink")) {
-      group.controls.googleDiskLink.setValue(
-        localStorage.getItem("googleDiskLink")
-      );
-    }
   });
 
   const handleFormSubmit = async () => {
@@ -72,16 +57,10 @@ const SectionTrain = () => {
           <Form>
             <div>
               <TextInput
-                name={`googleDiskLink`}
+                name={`googleDriveLink`}
                 type={`text`}
-                placeholder={`Google Disk folder`}
-                control={group.controls.googleDiskLink}
-                onInputHandler={() =>
-                  localStorage.setItem(
-                    "googleDiskLink",
-                    group.controls.googleDiskLink.value
-                  )
-                }
+                placeholder={`Google Drive folder`}
+                control={group.controls.googleDriveLink}
               />
             </div>
           </Form>

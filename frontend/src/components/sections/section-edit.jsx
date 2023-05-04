@@ -107,7 +107,7 @@ const SectionCut = () => {
 
   return (
     <>
-      <Header text="Edit mesh" />
+      <Header text="Edit scene" />
       <Wrapper>
         <div>{getThreeDom()}</div>
         <Sidebar>
