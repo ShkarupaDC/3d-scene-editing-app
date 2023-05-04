@@ -11,7 +11,8 @@
     "solid-forms": "^0.4.8",
     "solid-js": "^1.6.15",
     "solid-styled-components": "^0.28.5",
-    "three": "^0.149.0"
+    "three": "^0.149.0",
+    "three-csg": "^1.0.0"
   },
   "devDependencies": {
     "@sentry/vite-plugin": "^0.4.0",

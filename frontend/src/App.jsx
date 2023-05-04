@@ -1,25 +1,12 @@
-import { Route, Routes, Navigate } from "@solidjs/router";
-import Header from "./components/header";
-import Edit from "./routes/edit";
-import Train from "./routes/train";
 import { createGlobalStyles, styled } from "solid-styled-components";
+import IndexPage from "./pages";
 
 const App = () => {
-  const navLinks = [
-    { name: `Train`, href: `/train` },
-    { name: `Edit`, href: `/edit` },
-  ];
-
   return (
     <>
       <GlobalStyle />
-      <Header navLinks={navLinks} />
       <Content>
-        <Routes>
-          <Route path="/" element={<Navigate href={`/train`} />} />
-          <Route path="/train" component={Train} />
-          <Route path="/edit" component={Edit} />
-        </Routes>
+        <IndexPage />
       </Content>
     </>
   );
@@ -32,14 +19,12 @@ const GlobalStyle = createGlobalStyles`
   --mainColor: #333333;
   --secondaryColor: #cccccc;
   --thirdColor: #BB2222;
-  --navLinkSize: 22px;
-  --headerHeight: 60px;
-  --outsidePadding: 60px;
+  --errorMessageSize: 24px;
+  --outsidePadding: 64px;
 }`;
 
 const Content = styled("section")`
-  display: flex;
-  margin: auto;
+  margin: 64px auto;
   align-items: center;
   justify-content: center;
   min-height: calc(100vh - var(--headerHeight));
