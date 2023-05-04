@@ -6,7 +6,6 @@
   "license": "MIT",
   "dependencies": {
     "@solidjs/router": "^0.7.0",
-    "dexie": "^3.2.3",
     "googleapis": "^114.0.0",
     "solid-forms": "^0.4.8",
     "solid-js": "^1.6.15",
