@@ -1,33 +1,35 @@
-import { createFormControl } from "solid-forms";
-import { mergeProps, Show } from "solid-js";
-import { styled } from "solid-styled-components";
+import { createFormControl } from 'solid-forms';
+import { mergeProps, splitProps, Show } from 'solid-js';
+import { styled } from 'solid-styled-components';
 
 const TextInput = (props) => {
-  const mergedProps = mergeProps({ control: createFormControl("") }, props);
+  props = mergeProps({ control: createFormControl('') }, props);
+  const [ownProps, inputProps] = splitProps(props, [
+    'control',
+    'name',
+    'placeholder',
+  ]);
+  const control = () => ownProps.control;
 
   return (
-    <Wrapper class="wrapper-input" error={mergedProps.errorMessage}>
-      <Field
-        type={mergedProps.type}
+    <Wrapper class="wrapper-input">
+      <input
+        {...inputProps}
         placeholder={` `}
-        id={mergedProps.name}
-        name={mergedProps.name}
-        value={mergedProps.control.value}
-        // eslint-disable-next-line solid/reactivity
+        id={ownProps.name}
+        name={ownProps.name}
+        value={control().value}
         onInput={(event) => {
-          mergedProps.control.setValue(event.target.value);
-          if (props.onInputHandler) {
-            props.onInputHandler();
-          }
+          control().setValue(event.target.value);
         }}
-        // eslint-disable-next-line solid/reactivity
-        onBlur={() => props.control.markTouched(true)}
+        onBlur={() => control().markTouched(true)}
       />
-      <Label for={mergedProps.name}>{mergedProps.placeholder}</Label>
+      <label for={ownProps.name}>{ownProps.placeholder}</label>
 
       <Message>
-        <Show when={props.control.isTouched && props.control.errors}>
-          {mergedProps.control.errors.errorMessage}
+        <Show when={!control().isValid}>
+          {/* control().isTouched &&  */}
+          {control().errors.message}
         </Show>
       </Message>
     </Wrapper>
@@ -36,17 +38,13 @@ const TextInput = (props) => {
 
 export default TextInput;
 
-const Wrapper = styled("div")`
+const Wrapper = styled('div')`
   input {
     border-bottom: 2px solid
-      ${(props) => (props.error ? "var(--thirdColor)" : "var(--mainColor)")};
+      ${(props) => (props.error ? 'var(--thirdColor)' : 'var(--mainColor)')};
   }
 `;
 
-const Field = styled("input")``;
-
-const Label = styled("label")``;
-
-const Message = styled("div")`
+const Message = styled('div')`
   color: var(--thirdColor);
 `;
