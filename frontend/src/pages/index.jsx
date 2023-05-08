@@ -1,46 +1,32 @@
-import { createFormControl, createFormGroup } from "solid-forms";
-import TextInput from "../components/form/text-input";
-import SectionEdit from "../components/sections/section-edit";
-import SectionTrain from "../components/sections/section-train";
-import { validateEmail } from "../helpers";
-import { styled } from "solid-styled-components";
-import Header from "../components/header";
-import SectionCompose from "../components/sections/section-compose";
-import SectionRendered from "../components/sections/section-rendered";
+import EditSection from '../components/sections/edit-section';
+import TrainSection from '../components/sections/train-section';
+import ComposeSection from '../components/sections/compose-section';
+import RenderingSection from '../components/sections/rendering-section';
+import EmailSection from '../components/sections/email-section';
+
+// 1. Separate handler for backend errors
+// 2. Class for renderer - done
+// 3. fetchRendering - createResource?
+// 4. Download image button recheck!
+// 5. Edit section -> Edit AABB | Edit Image Masks (tabs)
+// 6. Compose section: add controls; redo load; extract T; send POST request - done
+// 7. Edit section: add inner / outer checkbox
+// 8. Edit AABB: make x, y, z a separate form - won't do
+// 9. Handle isTouched
+// 10. Experiment with OrbitsControl - done
+// 11. Forward backend traffic to local network - done
+// 12. Image masks
 
 const IndexPage = () => {
-  const group = createFormGroup({
-    email: createFormControl("", {
-      validators: (value) =>
-        validateEmail(value)
-          ? null
-          : { errorMessage: "Email address is invalid" },
-    }),
-  });
   return (
     <>
-      <Header text="Enter Email" />
-      <Fieldset>
-        <TextInput
-          name={`email`}
-          placeholder={`Email`}
-          control={group.controls.email}
-        />
-      </Fieldset>
-      <SectionTrain />
-      <SectionEdit />
-      <SectionCompose />
-      <SectionRendered />
+      <EmailSection />
+      <TrainSection />
+      <EditSection />
+      <ComposeSection />
+      <RenderingSection />
     </>
   );
 };
 
 export default IndexPage;
-
-const Fieldset = styled("fieldset")`
-  display: flex;
-  justify-content: center;
-  input {
-    width: 350px;
-  }
-`;

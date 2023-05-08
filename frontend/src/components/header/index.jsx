@@ -12,6 +12,7 @@ export default Header;
 
 const Wrapper = styled("header")`
   display: block;
+  width: 100%;
   height: 32px;
   border-bottom: 1px solid var(--secondaryColor);
   margin: 64px 0 32px;

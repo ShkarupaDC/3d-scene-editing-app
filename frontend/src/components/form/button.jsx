@@ -1,22 +1,16 @@
+import { splitProps } from "solid-js";
 import { styled } from "solid-styled-components";
 
 const Button = (props) => {
+  const [ownProps, buttonProps] = splitProps(props, ["placeholder"]);
   return (
-    <Wrapper class="wrapper-input">
-      <Field
-        type={props.type}
-        disabled={props.disabled}
-        onClick={props.onClick}
-      >
-        {props.placeholder}
-      </Field>
-    </Wrapper>
+    <div class="wrapper-input">
+      <Field {...buttonProps}>{ownProps.placeholder}</Field>
+    </div>
   );
 };
 
 export default Button;
-
-const Wrapper = styled("div")``;
 
 const Field = styled("button")`
   border: 2px solid var(--mainColor);
