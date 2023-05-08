@@ -53,6 +53,13 @@ class EditImageMasksModel(EditModel):
     image_masks: List[UploadFile]
     cameras: Cameras
 
+    @validator("image_masks", each_item=True)
+    def check_images(cls, value: UploadFile) -> UploadFile:
+        if not value.content_type.startswith("image/"):
+            return ValueError(
+                f"Masks must be images, not {value.content_type}")
+        return value
+
     @root_validator(skip_on_failure=True)
     def check_masks(cls, values: Dict[str, Any]) -> Dict[str, Any]:
         if len(values["image_masks"]) != len(values["cameras"]):

@@ -36,14 +36,14 @@ class ExperimentService:
             expected_types: ExpectedExperimentTypes) -> None:
         if isinstance(expected_types, ExperimentType):
             if experiment.type is not expected_types:
-                raise ExperimentError(f"Type of experiment {experiment.id} must be {expected_types.value}, but is {experiment.type.value}")  # yapf: disable
+                raise ExperimentError(f"Type of experiment {experiment.id} must be {expected_types.value}, but it is {experiment.type.value}!")  # yapf: disable
         else:
             if experiment.type not in expected_types:
                 raise ExperimentError(f"Type of experiment {experiment.id} must be one of {[type_enum.value for type_enum in expected_types]}")  # yapf: disable
 
     def _check_experiment_done(self, experiment: Experiment) -> None:
         if experiment.state is not ExperimentState.DONE:
-            raise ExperimentError(f"Experiment {experiment.id} is not done, but is {experiment.state.as_string()}!") # yapf: disable
+            raise ExperimentError(f"Experiment {experiment.id} is not done, but it is {experiment.state.as_string()}!") # yapf: disable
 
     def _check_experiment(self, experiment_id: str,
                           expected_types: ExpectedExperimentTypes) -> None:

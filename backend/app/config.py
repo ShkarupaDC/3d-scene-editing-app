@@ -26,8 +26,7 @@ class Settings(BaseSettings):
 
     # GPU pool
     gpu_count: Optional[int] = None
-    min_free_memory: float = 10_000  # MiB
-    mock_gpus: bool = False
+    min_free_memory: float = 11_000  # MiB
 
     # Experiment runner
     cpu_process_count: int = 4

@@ -1,4 +1,5 @@
 from pathlib import Path
+import warnings
 from dataclasses import dataclass
 from typing import Optional, List
 
@@ -48,8 +49,13 @@ def get_aabb_volume_mask(model: CCNeRF,
                          aabb: torch.Tensor,
                          inner_region: bool = True) -> torch.Tensor:
     assert aabb.shape == (2, 3), aabb.shape
-    assert torch.all(aabb[0] >= model.aabb[0]) and torch.all(
-        aabb[1] <= model.aabb[1]), (aabb, model.aabb)
+    if torch.any(aabb[0] < model.aabb[0]) or torch.any(
+            aabb[1] > model.aabb[1]):
+        warnings.warn(
+            f"AABB {aabb} is out of parent AABB bounds {model.aabb}. Clipping..."
+        )
+        aabb[0].clip_(model.aabb[0], model.aabb[1])
+        aabb[1].clip_(model.aabb[0], model.aabb[1])
 
     device = model.device
     alpha_grid: torch.Tensor = model.alphaMask.alpha_volume  # 1, 1, D, H, W

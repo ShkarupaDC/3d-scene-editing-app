@@ -112,7 +112,9 @@ class ExperimentDAO:  # filesystem-based
         base_path = self.get_base_image_masks_path(experiment_id)
         base_path.mkdir(exist_ok=True)
         image_masks_paths = [
-            base_path.joinpath(f"{idx}.jpg") for idx in range(len(image_masks))
+            base_path.joinpath(
+                f"{idx}.{image_mask.content_type.split('/')[-1]}")
+            for idx, image_mask in enumerate(image_masks)
         ]
         await asyncio.wait([
             write_upload_file(image_mask, path)

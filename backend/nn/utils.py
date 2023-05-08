@@ -94,20 +94,24 @@ def export_mesh(model: Union[CCNeRF, Path],
         vertices=o3d.utility.Vector3dVector(vertices),
         triangles=o3d.utility.Vector3iVector(faces),
     )
+    triangles_count = len(mesh.triangles)
     mesh.vertex_normals = o3d.utility.Vector3dVector(normals)
     triangle_clusters, cluster_n_triangles, _ = map(
         np.asarray, mesh.cluster_connected_triangles())
     remove_mask = cluster_n_triangles[
         triangle_clusters] < min_cluster_triangles
     mesh.remove_triangles_by_mask(remove_mask)
+    logger.debug(
+        f"Remove trash! #triangles: {triangles_count} -> {len(mesh.triangles)}"
+    )
 
     if reduction_factor is not None:
         assert reduction_factor > 1, reduction_factor
-        trinagles_count = len(mesh.triangles)
+        triangles_count = len(mesh.triangles)
         mesh = mesh.simplify_quadric_decimation(
-            target_number_of_triangles=trinagles_count // reduction_factor)
+            target_number_of_triangles=triangles_count // reduction_factor)
         logger.debug(
-            f"Simplify! #triangles: {trinagles_count} -> {len(mesh.triangles)}"
+            f"Simplify! #triangles: {triangles_count} -> {len(mesh.triangles)}"
         )
 
     o3d.io.write_triangle_mesh(

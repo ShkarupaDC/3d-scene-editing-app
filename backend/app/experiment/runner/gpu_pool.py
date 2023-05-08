@@ -9,11 +9,9 @@ from app.config import settings
 
 class GPUPool:
 
-    def __init__(self,
-                 gpu_count: Optional[int],
-                 min_free_memory: float,
-                 mock_gpus: bool = False) -> None:
-        self.gpus = self.__find_gpus(gpu_count, min_free_memory, mock_gpus)
+    def __init__(self, gpu_count: Optional[int],
+                 min_free_memory: float) -> None:
+        self.gpus = self.__find_gpus(gpu_count, min_free_memory)
         self.min_free_memory = min_free_memory
         self.semaphore = asyncio.BoundedSemaphore(self.gpu_count)
         self.lock = asyncio.Lock()
@@ -23,14 +21,8 @@ class GPUPool:
     def gpu_count(self) -> int:
         return len(self.gpus)
 
-    def __find_gpus(self, gpu_count: Optional[int], min_free_memory: float,
-                    mock_gpus: bool) -> List[GPUtil.GPU]:
-        # TODO(dsh): Remove
-        if mock_gpus:
-            if gpu_count is None:
-                raise ValueError(
-                    "When mock_gpus=True, gpu_count must not be None")
-            return [_get_mock_gpu(gpu_id) for gpu_id in range(gpu_count)]
+    def __find_gpus(self, gpu_count: Optional[int],
+                    min_free_memory: float) -> List[GPUtil.GPU]:
         gpus: List[GPUtil.GPU] = [
             gpu for gpu in GPUtil.getGPUs()
             if gpu.memoryFree >= min_free_memory
@@ -73,24 +65,5 @@ class GPUPool:
             await self.release_gpu(gpu)
 
 
-# TODO(dsh): remove
-def _get_mock_gpu(gpu_id: int) -> GPUtil.GPU:
-    return GPUtil.GPU(
-        ID=gpu_id,
-        uuid=gpu_id,
-        load=0,
-        memoryTotal=11264.0,
-        memoryUsed=1.0,
-        memoryFree=11018.0,
-        driver="515.43.04",
-        gpu_name="NVIDIA GeForce RTX 2080 Ti",
-        serial="[N/A]",
-        display_mode="Disabled",
-        display_active="Disabled",
-        temp_gpu=27.0,  # temperature
-    )
-
-
 gpu_pool = GPUPool(gpu_count=settings.gpu_count,
-                   min_free_memory=settings.min_free_memory,
-                   mock_gpus=settings.mock_gpus)
+                   min_free_memory=settings.min_free_memory)

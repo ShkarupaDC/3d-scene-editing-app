@@ -28,12 +28,13 @@ class EmailService:
     async def send_email(self, message: email.message.EmailMessage) -> None:
         await asyncio.sleep(3)
         logger.info(message.as_string())
-        # await aiosmtplib.send(message=message,
-        #                       hostname=self.smtp_host,
-        #                       port=self.smtp_port,
-        #                       username=self.username,
-        #                       password=self.password,
-        #                       start_tls=self.start_TLS)
+        return
+        await aiosmtplib.send(message=message,
+                              hostname=self.smtp_host,
+                              port=self.smtp_port,
+                              username=self.username,
+                              password=self.password,
+                              start_tls=self.start_TLS)
 
 
 @dataclass
