@@ -8,16 +8,14 @@
 
 html,
 body,
-.wrapper-input {
+.wrapper-input, .wrapper-button {
   padding: 0;
   margin: 0;
   font-family: "Montserrat", sans-serif;
   font-weight: 500;
-}
-
-.wrapper-input {
   position: relative;
 }
+
 
 .wrapper-input div {
   font-size: 14px;

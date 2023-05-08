@@ -4,7 +4,7 @@ import { styled } from "solid-styled-components";
 const Button = (props) => {
   const [ownProps, buttonProps] = splitProps(props, ["placeholder"]);
   return (
-    <div class="wrapper-input">
+    <div class="wrapper-button">
       <Field {...buttonProps}>{ownProps.placeholder}</Field>
     </div>
   );
