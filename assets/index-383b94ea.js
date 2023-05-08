@@ -17,7 +17,7 @@ ${r}. Is your HTML properly formed?`;let i=n.content.firstChild;return t&&(i=i.f
 `,eh=We("div")`
   color: var(--thirdColor);
   display: ${r=>r.withoutMessage?"none":"flex"};
-`,th=yn('<div class="wrapper-input"></div>',2),An=r=>{const[e,t]=Qr(r,["placeholder"]);return(()=>{const n=th.cloneNode(!0);return Yt(n,de(nh,$n(t,{get children(){return e.placeholder}}))),n})()},nh=We("button")`
+`,th=yn('<div class="wrapper-button"></div>',2),An=r=>{const[e,t]=Qr(r,["placeholder"]);return(()=>{const n=th.cloneNode(!0);return Yt(n,de(nh,$n(t,{get children(){return e.placeholder}}))),n})()},nh=We("button")`
   border: 2px solid var(--mainColor);
   transition: background-color 0.25s;
   &:hover {
