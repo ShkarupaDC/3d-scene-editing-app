@@ -6,17 +6,19 @@ import TextInput from '../form/text-input';
 import Button from '../form/button';
 import Header from '../header';
 import { postEditAABB } from '../../helpers/api';
-import { EditAABBViewer } from '../../helpers/renderer';
+import { EditAABBViewer3d } from '../../helpers/3d-viewer';
 
 const storage = localStorage;
 
 const EditSection = () => {
+  const region = createFormControl('outer');
   const experimentId = createFormControl('');
 
-  const viewer = new EditAABBViewer();
+  const viewer = new EditAABBViewer3d();
   viewer.runLoop();
 
   const onSubmit = async () => {
+    experimentId.setErrors(null);
     const email = storage.getItem('email');
     if (!email) {
       experimentId.setErrors({ message: 'Email is invalid!' });
@@ -31,7 +33,7 @@ const EditSection = () => {
         email,
         experimentId.value,
         viewer.aabbArray,
-        false,
+        region.value === 'inner',
       );
       experimentId.setValue(newExperimentId);
     } catch (error) {
@@ -52,13 +54,26 @@ const EditSection = () => {
     <>
       <Header text="Edit scene" />
       <Wrapper>
-        {/* <div>{getThreeDom()}</div> */}
         <div>{viewer.canvas}</div>
         <Sidebar>
-          {/* <Fieldset>
-            <TextInput type={`radio`} name={`inner`} placeholder={`Inner`} />
-            <TextInput type={`radio`} name={`outer`} placeholder={`Outer`} />
-          </Fieldset> */}
+          <div>
+            {/* onChange={(event) => region.setValue(event.target.value)} */}
+            <TextInput
+              type={`radio`}
+              name={`region`}
+              value={`inner`}
+              placeholder={`Inner`}
+              onChange={(event) => region.setValue(event.target.value)}
+            />
+            <TextInput
+              type={`radio`}
+              name={`region`}
+              value={`outer`}
+              placeholder={`Outer`}
+              checked
+              onChange={(event) => region.setValue(event.target.value)}
+            />
+          </div>
         </Sidebar>
         <Fieldset left>
           <HashInput

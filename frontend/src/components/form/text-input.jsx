@@ -4,11 +4,7 @@ import { styled } from 'solid-styled-components';
 
 const TextInput = (props) => {
   props = mergeProps({ control: createFormControl('') }, props);
-  const [ownProps, inputProps] = splitProps(props, [
-    'control',
-    'name',
-    'placeholder',
-  ]);
+  const [ownProps, inputProps] = splitProps(props, ['control']);
   const control = () => ownProps.control;
 
   return (
@@ -16,21 +12,17 @@ const TextInput = (props) => {
       <input
         {...inputProps}
         placeholder={` `}
-        id={ownProps.name}
-        name={ownProps.name}
-        value={control().value}
+        id={inputProps.id ?? inputProps.name}
+        value={inputProps.value ?? control().value}
         onInput={(event) => {
           control().setValue(event.target.value);
         }}
         onBlur={() => control().markTouched(true)}
       />
-      <label for={ownProps.name}>{ownProps.placeholder}</label>
+      <label for={inputProps.name}>{inputProps.placeholder}</label>
 
       <Message>
-        <Show when={!control().isValid}>
-          {/* control().isTouched &&  */}
-          {control().errors.message}
-        </Show>
+        <Show when={!control().isValid}>{control().errors.message}</Show>
       </Message>
     </Wrapper>
   );

@@ -2,45 +2,12 @@ import * as THREE from 'three';
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls';
 
-const API_URL = import.meta.env.VITE_API_URL;
+import { handleAPIError, API_URL } from './api';
 
 const TRANSLATE_KEY = 't';
 const SCALE_KEY = 's';
 const ROTATE_KEY = 'r';
-
-export const addMesh = async (loader, scene, experimentId) => {
-  let geometry;
-  try {
-    geometry = await loader.loadAsync(
-      `${API_URL}/experiment/${experimentId}/mesh`,
-      (xhr) => {
-        // console.log((xhr.loaded / xhr.total) * 100);
-      },
-    );
-  } catch (error) {
-    if (error instanceof TypeError && error.message === 'Failed to fetch') {
-      throw error;
-    }
-    console.log(error);
-    const data = await error.response.json();
-    const detail = data['detail'];
-    let message;
-    if (Array.isArray(detail) && detail.length == 1) {
-      message = data['detail'];
-    } else {
-      message = JSON.stringify(detail);
-    }
-    throw new Error(message);
-  }
-  geometry.computeVertexNormals();
-  const material = new THREE.MeshNormalMaterial();
-  const mesh = new THREE.Mesh(geometry, material);
-  mesh.name = hash;
-  scene.add(mesh);
-  return mesh;
-};
 
 const arrayToMatrix = (array, columns) =>
   array.reduce(
@@ -57,7 +24,7 @@ const arrayToSquareMatrix = (array) =>
 const threeMatrixToArray = (matrix) =>
   arrayToSquareMatrix(matrix.clone().transpose().elements);
 
-class Viewer {
+class Viewer3d {
   #meshLoader;
   #renderer;
   _camera;
@@ -82,6 +49,7 @@ class Viewer {
     this._cameraControl.update();
 
     window.addEventListener('mousemove', this.#catchMouseEvent.bind(this));
+    window.addEventListener('resize', this.#onWindowResize.bind(this));
   }
 
   get canvas() {
@@ -96,14 +64,38 @@ class Viewer {
     this._mouseEvent = event;
   }
 
+  // TODO: fix
+  #onWindowResize(event) {
+    if (
+      this.canvas.width !== this.canvas.clientWidth ||
+      this.canvas.height !== this.canvas.clientHeight
+    ) {
+      this.#renderer.setSize(
+        this.canvas.clientWidth,
+        this.canvas.clientHeight,
+        false,
+      );
+      this._camera.aspect = this.canvas.clientWidth / this.canvas.clientHeight;
+      this._camera.updateProjectionMatrix();
+    }
+  }
+
   _disableCamera(event) {
     this._cameraControl.enabled = !event.value;
   }
 
   async _fetchMesh(experimentId) {
-    const geometry = await this.#meshLoader.loadAsync(
-      `${API_URL}/experiment/${experimentId}/mesh`,
-    );
+    let geometry;
+    try {
+      geometry = await this.#meshLoader.loadAsync(
+        `${API_URL}/experiment/${experimentId}/mesh`,
+      );
+    } catch (error) {
+      if (error?.response) {
+        await handleAPIError(error.response);
+      }
+      throw error;
+    }
     geometry.computeVertexNormals();
     const material = new THREE.MeshNormalMaterial();
     return new THREE.Mesh(geometry, material);
@@ -120,7 +112,7 @@ class Viewer {
   }
 }
 
-export class EditAABBViewer extends Viewer {
+export class EditAABBViewer3d extends Viewer3d {
   #mesh;
   #aabb;
   #control;
@@ -222,22 +214,14 @@ export class EditAABBViewer extends Viewer {
   }
 }
 
-export class ComposeViewer extends Viewer {
+export class ComposeViewer3d extends Viewer3d {
   #raycaster;
   #meshIdToControlId = new Map();
 
   constructor(...args) {
     super(...args);
     this.#raycaster = new THREE.Raycaster();
-    this.cameraControl.addEventListener(
-      'change',
-      this.#onCameraChange.bind(this),
-    );
     window.addEventListener('keydown', this.#onKeydown.bind(this));
-  }
-
-  #onCameraChange(event) {
-    console.log(this.cameraIntrinsics);
   }
 
   #onKeydown(event) {
@@ -249,7 +233,6 @@ export class ComposeViewer extends Viewer {
     ) {
       return;
     }
-    console.log(meshes);
     const position = this.#getMousePosition(this._mouseEvent);
     this.#raycaster.setFromCamera(position, this._camera);
     const objects = this.#raycaster.intersectObjects(meshes);

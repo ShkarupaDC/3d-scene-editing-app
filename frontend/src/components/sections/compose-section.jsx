@@ -6,7 +6,7 @@ import HashInput from '../form/hash-input';
 import Button from '../form/button';
 import TextInput from '../form/text-input';
 import Header from '../header';
-import { ComposeViewer } from '../../helpers/renderer';
+import { ComposeViewer3d } from '../../helpers/3d-viewer';
 import { postRender } from '../../helpers/api';
 
 const MAX_EXPERIMENTS = 5;
@@ -18,7 +18,7 @@ const ComposeSection = () => {
   const outExperimentId = createFormControl('');
   const experiments = createFormArray([]);
 
-  const viewer = new ComposeViewer();
+  const viewer = new ComposeViewer3d();
   viewer.runLoop();
 
   const onLoadMesh = async () => {
