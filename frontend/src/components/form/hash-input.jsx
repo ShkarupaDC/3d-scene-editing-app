@@ -1,13 +1,14 @@
-import { createFormControl } from 'solid-forms';
-import { mergeProps } from 'solid-js';
-import { styled } from 'solid-styled-components';
-import icon from '../../assets/copy-ico.svg';
+import { createFormControl } from "solid-forms";
+import { mergeProps, Show } from "solid-js";
+import { styled } from "solid-styled-components";
+import icon from "../../assets/copy-ico.svg";
+import ErrorMessage from "./error-message";
 
 const HashInput = (props) => {
-  props = mergeProps({ control: createFormControl('') }, props);
+  props = mergeProps({ control: createFormControl("") }, props);
   return (
-    <div class="wrapper-input">
-      <Field
+    <Wrapper value={!!props.control.value} class="input-wrapper">
+      <input
         type={`text`}
         placeholder={` `}
         id={props.name}
@@ -19,42 +20,51 @@ const HashInput = (props) => {
         }}
         disabled={props.control.isDisabled}
       />
-      <Label for={props.name}>{props.placeholder}</Label>
-      <Message>
-        <Show when={!props.control.isValid}>
-          {props.control.errors.message}
-        </Show>
-      </Message>
-      <Image
-        visibility={!!props.control.value}
+      <label for={props.name}>{props.placeholder}</label>
+      <Show when={!props.withoutMessage}>
+        <ErrorMessage
+          isValid={props.control.isValid}
+          message={props.control.errors.message}
+        />
+      </Show>
+      <img
+        visibility={props.control.value}
         src={icon}
         onClick={() => navigator.clipboard.writeText(props.control.value)}
       />
-    </div>
+    </Wrapper>
   );
 };
 
 export default HashInput;
 
-const Field = styled('input')`
-  border: 2px solid var(--mainColor);
-  border-right: none;
-  padding-left: ${(props) => (props.value ? '40px' : '8px')};
-`;
-
-const Label = styled('label')`
-  padding-top: 2px;
-`;
-
-const Image = styled('img')`
-  cursor: pointer;
-  visibility: ${(props) => (props.visibility ? 'visible' : 'hidden')};
-  position: absolute;
-  width: 20px;
-  top: 10px;
-  left: 10px;
-`;
-
-const Message = styled('div')`
-  color: var(--thirdColor);
+const Wrapper = styled("div")`
+  input {
+    border-width: 2px 0 2px 2px;
+    padding-left: ${(props) => (props.value ? "40px" : "8px")};
+    &:focus ~ label,
+    &:not(:placeholder-shown) + label {
+      transform: translate(-4px, -14px);
+      padding: 0 1px;
+      font-size: 12px;
+      background-color: white;
+    }
+  }
+  label {
+    padding-top: 2px;
+    font-size: 18px;
+    transition: 0.25s all;
+    pointer-events: none;
+    position: absolute;
+    top: 5px;
+    left: 10px;
+  }
+  img {
+    cursor: pointer;
+    visibility: ${(props) => (props.value ? "visible" : "hidden")};
+    position: absolute;
+    width: 20px;
+    top: 10px;
+    left: 10px;
+  }
 `;

@@ -1,12 +1,12 @@
 export const API_URL = import.meta.env.VITE_API_URL;
 
 const handleEachDetail = (detail) => {
-  if (typeof detail === 'string') {
+  if (typeof detail === "string") {
     return detail;
   }
-  if (typeof detail === 'object') {
-    const location = detail.loc.join('.');
-    const context = detail?.ctx ? JSON.stringify(detail.ctx) : 'missing';
+  if (typeof detail === "object") {
+    const location = detail.loc.join(".");
+    const context = detail?.ctx ? JSON.stringify(detail.ctx) : "missing";
     return `Location: ${location} Error type: ${detail.type}. Message: ${detail.msg}. Context: ${context}`;
   }
   return JSON.stringify(detail);
@@ -31,8 +31,8 @@ export const handleAPIError = async (response) => {
   }
   const detail = body.detail;
   if (Array.isArray(detail)) {
-    message = detail.map(handleEachDetail).join('\n');
-  } else if (typeof detail === 'string') {
+    message = detail.map(handleEachDetail).join("\n");
+  } else if (typeof detail === "string") {
     message = detail;
   } else {
     message = JSON.stringify(detail);
@@ -41,11 +41,11 @@ export const handleAPIError = async (response) => {
 };
 
 export const postTrain = async (email, dataURL) => {
-  const requestBody = { data_url: dataURL, email, dataset_type: 'blender' };
+  const requestBody = { data_url: dataURL, email, dataset_type: "blender" };
   const response = await fetch(`${API_URL}/experiment/train`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(requestBody),
   });
@@ -55,7 +55,7 @@ export const postTrain = async (email, dataURL) => {
 
 export const getRendering = async (experimentId) => {
   const response = await fetch(
-    `${API_URL}/experiment/${experimentId}/rendering`,
+    `${API_URL}/experiment/${experimentId}/rendering`
   );
   await handleAPIError(response);
   const imageBlob = await response.blob();
@@ -66,7 +66,7 @@ export const postEditAABB = async (
   email,
   baseExperimentId,
   aabb,
-  innerRegion,
+  innerRegion
 ) => {
   const responseBody = {
     email,
@@ -75,9 +75,9 @@ export const postEditAABB = async (
     inner_region: innerRegion,
   };
   const response = await fetch(`${API_URL}/experiment/edit/aabb`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(responseBody),
   });
@@ -90,18 +90,18 @@ export const postEditImageMasks = async (
   baseExperimentId,
   masks,
   cameras,
-  innerRegion,
+  innerRegion
 ) => {
   const formData = new FormData();
-  formData.set('email', email);
-  formData.set('base_experiment_id', baseExperimentId);
+  formData.set("email", email);
+  formData.set("base_experiment_id", baseExperimentId);
   for (const mask of masks) {
-    formData.append('image_masks', mask);
+    formData.append("image_masks", mask);
   }
-  formData.set('cameras', JSON.stringify({ cameras }));
-  formData.set('inner_region', innerRegion);
+  formData.set("cameras", JSON.stringify({ cameras }));
+  formData.set("inner_region", innerRegion);
   const response = await fetch(`${API_URL}/experiment/edit/image-masks`, {
-    method: 'POST',
+    method: "POST",
     body: formData,
   });
   await handleAPIError(response);
@@ -116,9 +116,9 @@ export const postRender = async (email, scenes, imageSize, camera) => {
     camera,
   };
   const response = await fetch(`${API_URL}/experiment/render`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(responseBody),
   });

@@ -1,14 +1,15 @@
-import { createFormControl } from 'solid-forms';
-import { mergeProps, splitProps, Show } from 'solid-js';
-import { styled } from 'solid-styled-components';
+import { createFormControl } from "solid-forms";
+import { Show, mergeProps, splitProps } from "solid-js";
+import { styled } from "solid-styled-components";
+import ErrorMessage from "./error-message";
 
 const TextInput = (props) => {
-  props = mergeProps({ control: createFormControl('') }, props);
-  const [ownProps, inputProps] = splitProps(props, ['control']);
+  props = mergeProps({ control: createFormControl("") }, props);
+  const [ownProps, inputProps] = splitProps(props, ["control"]);
   const control = () => ownProps.control;
 
   return (
-    <Wrapper class="wrapper-input">
+    <Wrapper class="input-wrapper">
       <input
         {...inputProps}
         placeholder={` `}
@@ -20,23 +21,35 @@ const TextInput = (props) => {
         onBlur={() => control().markTouched(true)}
       />
       <label for={inputProps.name}>{inputProps.placeholder}</label>
-
-      <Message>
-        <Show when={!control().isValid}>{control().errors.message}</Show>
-      </Message>
+      <Show when={!props.withoutMessage}>
+        <ErrorMessage
+          isValid={props.control.isValid}
+          message={props.control.errors.message}
+        />
+      </Show>
     </Wrapper>
   );
 };
 
 export default TextInput;
 
-const Wrapper = styled('div')`
+const Wrapper = styled("div")`
   input {
-    border-bottom: 2px solid
-      ${(props) => (props.error ? 'var(--thirdColor)' : 'var(--mainColor)')};
+    border-width: 0 0 2px;
+    &:focus ~ label,
+    &:not(:placeholder-shown) + label {
+      transform: translate(-4px, -14px);
+      padding: 0 1px;
+      font-size: 12px;
+      background-color: white;
+    }
   }
-`;
-
-const Message = styled('div')`
-  color: var(--thirdColor);
+  label {
+    font-size: 18px;
+    transition: 0.25s all;
+    pointer-events: none;
+    position: absolute;
+    top: 5px;
+    left: 10px;
+  }
 `;

@@ -1,31 +1,31 @@
-import { styled } from 'solid-styled-components';
-import { createFormControl } from 'solid-forms';
+import { styled } from "solid-styled-components";
+import { createFormControl } from "solid-forms";
 
-import HashInput from '../form/hash-input';
-import TextInput from '../form/text-input';
-import Button from '../form/button';
-import Header from '../header';
-import { postEditAABB } from '../../helpers/api';
-import { EditAABBViewer3d } from '../../helpers/3d-viewer';
+import HashInput from "../form/hash-input";
+import Button from "../form/button";
+import Header from "../header";
+import { postEditAABB } from "../../helpers/api";
+import { EditAABBViewer3d } from "../../helpers/3d-viewer";
+import RadioInput from "../form/radio-input";
 
 const storage = localStorage;
 
 const EditSection = () => {
-  const region = createFormControl('outer');
-  const experimentId = createFormControl('');
+  const region = createFormControl("outer");
+  const experimentId = createFormControl("");
 
   const viewer = new EditAABBViewer3d();
   viewer.runLoop();
 
   const onSubmit = async () => {
     experimentId.setErrors(null);
-    const email = storage.getItem('email');
+    const email = storage.getItem("email");
     if (!email) {
-      experimentId.setErrors({ message: 'Email is invalid!' });
+      experimentId.setErrors({ message: "Email is invalid!" });
       return;
     }
     if (!viewer.hasMesh) {
-      experimentId.setErrors({ message: 'Mesh is missing!' });
+      experimentId.setErrors({ message: "Mesh is missing!" });
       return;
     }
     try {
@@ -33,7 +33,7 @@ const EditSection = () => {
         email,
         experimentId.value,
         viewer.aabbArray,
-        region.value === 'inner',
+        region.value === "inner"
       );
       experimentId.setValue(newExperimentId);
     } catch (error) {
@@ -57,44 +57,52 @@ const EditSection = () => {
         <div>{viewer.canvas}</div>
         <Sidebar>
           <div>
-            {/* onChange={(event) => region.setValue(event.target.value)} */}
-            <TextInput
-              type={`radio`}
-              name={`region`}
-              value={`inner`}
-              placeholder={`Inner`}
-              onChange={(event) => region.setValue(event.target.value)}
-            />
-            <TextInput
-              type={`radio`}
-              name={`region`}
-              value={`outer`}
-              placeholder={`Outer`}
-              checked
-              onChange={(event) => region.setValue(event.target.value)}
-            />
+            <Sidebar>
+              <div>
+                <Header text={`Region`} sidebar />
+                <Fieldset>
+                  <RadioInput
+                    name={`region-edit`}
+                    id={`region-edit-inner`}
+                    value={`inner`}
+                    placeholder={`Inner`}
+                    onChange={(event) => region.setValue(event.target.value)}
+                  />
+                  <RadioInput
+                    name={`region-edit`}
+                    id={`region-edit-outer`}
+                    value={`outer`}
+                    placeholder={`Outer`}
+                    checked
+                    onChange={(event) => region.setValue(event.target.value)}
+                  />
+                </Fieldset>
+                <Header text={`Load Experiment`} sidebar />
+                <Fieldset>
+                  <HashInput
+                    name={`experimentId`}
+                    placeholder={`Experiment Id`}
+                    control={experimentId}
+                  />
+                  <Button
+                    name={`submit`}
+                    placeholder={`Load`}
+                    type={`button`}
+                    onClick={onLoadMesh}
+                  />
+                </Fieldset>
+              </div>
+              <Button
+                bottom
+                name={`apply`}
+                placeholder={`Apply`}
+                type={`button`}
+                disabled={!experimentId.isValid}
+                onClick={onSubmit}
+              />
+            </Sidebar>
           </div>
         </Sidebar>
-        <Fieldset left>
-          <HashInput
-            name={`experimentId`}
-            placeholder={`Experiment Id`}
-            control={experimentId}
-          />
-          <Button
-            name={`submit`}
-            placeholder={`Load`}
-            type={`button`}
-            onClick={onLoadMesh}
-          />
-        </Fieldset>
-        <Button
-          name={`apply`}
-          placeholder={`Apply`}
-          type={`button`}
-          disabled={!experimentId.isValid}
-          onClick={onSubmit}
-        />
       </Wrapper>
     </>
   );
@@ -102,25 +110,21 @@ const EditSection = () => {
 
 export default EditSection;
 
-const Wrapper = styled('section')`
+const Wrapper = styled("section")`
   justify-content: center;
   display: grid;
-  grid-template-columns: 1000px 256px;
   gap: 32px;
-`;
-
-const Fieldset = styled('fieldset')`
-  display: ${(props) => (props.left ? 'flex' : 'block')};
-  width: ${(props) => (props.left ? '1000px' : '96px')};
-  input {
-    width: ${(props) => (props.left ? '872px' : '96px')};
-  }
-  button {
-    width: 128px;
-  }
-`;
-
-const Sidebar = styled('div')`
-  display: grid;
   grid-template-columns: auto auto;
+`;
+
+const Fieldset = styled("fieldset")`
+  width: 256px;
+`;
+
+const Sidebar = styled("div")`
+  display: grid;
+  grid-template-rows: 714px auto;
+  fieldset {
+    margin-bottom: 32px;
+  }
 `;
