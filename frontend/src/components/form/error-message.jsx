@@ -3,9 +3,11 @@ import { styled } from "solid-styled-components";
 
 const ErrorMessage = (props) => {
   return (
-    <Wrapper>
-      <Show when={!props.isValid}>{props.message}</Show>
-    </Wrapper>
+    <Show when={!props.withoutMessage}>
+      <Wrapper>
+        <Show when={!props.isValid}>{props.message}</Show>
+      </Wrapper>
+    </Show>
   );
 };
 

@@ -7,6 +7,8 @@ import Button from "../form/button";
 import Header from "../header";
 import { ComposeViewer3d } from "../../helpers/3d-viewer";
 import { postRender } from "../../helpers/api";
+import SectionLayout from "../layouts/section-layout";
+import SidebarLayout from "../layouts/sidebar-layout";
 
 const MAX_EXPERIMENTS = 5;
 
@@ -84,92 +86,78 @@ const ComposeSection = () => {
   };
 
   return (
-    <>
-      <Header text="Compose scenes" />
-      <Wrapper>
-        <div>{viewer.canvas}</div>
-        <Sidebar>
-          <div>
-            <Header text="Add experiment" sidebar />
-            <Fieldset>
-              <HashInput
-                name={`experimentId`}
-                placeholder={`Experiment Id`}
-                control={inExperimentId}
-              />
-              <Button
-                name={`submit`}
-                placeholder={`Load`}
-                type={`button`}
-                onClick={bindOwner(onLoadMesh)}
-              />
-            </Fieldset>
-            <Show when={!!experiments.value.length}>
-              <Header text="Experiments" sidebar />
-              <Fieldsets>
-                <For each={experiments.controls}>
-                  {(experimentControl, index) => (
-                    <Fieldset>
-                      <HashInput
-                        withoutMessage={true}
-                        name={`experimentId_${index()}`}
-                        placeholder={`Experiment Id`}
-                        control={experimentControl}
-                      />
-                      <Button
-                        name={`submit`}
-                        placeholder={`Remove`}
-                        type={`button`}
-                        onClick={() => onRemoveMesh(experimentControl, index)}
-                      />
-                    </Fieldset>
-                  )}
-                </For>
-              </Fieldsets>
-            </Show>
-          </div>
-          <div>
-            <Fieldset>
-              <HashInput
-                name={`experimentId`}
-                placeholder={`Experiment Id`}
-                control={outExperimentId}
-              />
-              <Button
-                name={`submit`}
-                placeholder={`Render`}
-                type={`button`}
-                disabled={!inExperimentId.isValid}
-                onClick={onSubmit}
-              />
-            </Fieldset>
-          </div>
-        </Sidebar>
-      </Wrapper>
-    </>
+    <SectionLayout header={`Compose scenes`}>
+      <div>{viewer.canvas}</div>
+      <SidebarLayout>
+        <div>
+          <Header text="Add experiment" sidebar />
+          <Fieldset>
+            <HashInput
+              name={`experimentId`}
+              placeholder={`Experiment Id`}
+              control={inExperimentId}
+            />
+            <Button
+              name={`submit`}
+              placeholder={`Load`}
+              type={`button`}
+              onClick={bindOwner(onLoadMesh)}
+            />
+          </Fieldset>
+          <Show when={!!experiments.value.length}>
+            <Header text="Experiments" sidebar />
+            <Fieldsets>
+              <For each={experiments.controls}>
+                {(experimentControl, index) => (
+                  <Fieldset>
+                    <HashInput
+                      name={`experimentId_${index()}`}
+                      placeholder={`Experiment Id`}
+                      control={experimentControl}
+                      withoutMessage
+                      disabled
+                    />
+                    <Button
+                      name={`submit`}
+                      placeholder={`Remove`}
+                      type={`button`}
+                      onClick={() => onRemoveMesh(experimentControl, index)}
+                    />
+                  </Fieldset>
+                )}
+              </For>
+            </Fieldsets>
+          </Show>
+        </div>
+        <div>
+          <Fieldset>
+            <HashInput
+              name={`experimentId`}
+              placeholder={`Experiment Id`}
+              control={outExperimentId}
+            />
+            <Button
+              name={`submit`}
+              placeholder={`Render`}
+              type={`button`}
+              disabled={!inExperimentId.isValid}
+              onClick={onSubmit}
+            />
+          </Fieldset>
+        </div>
+      </SidebarLayout>
+    </SectionLayout>
   );
 };
 
 export default ComposeSection;
-
-const Wrapper = styled("section")`
-  justify-content: center;
-  display: grid;
-  grid-template-columns: 1000px 256px;
-  gap: 32px;
-`;
 
 const Fieldset = styled("fieldset")`
   width: 256px;
 `;
 
 const Fieldsets = styled("fieldset")`
-  display: flex;
+  display: block;
   row-gap: 24px;
   flex-wrap: wrap;
-`;
-
-const Sidebar = styled("div")`
-  display: grid;
-  grid-template-rows: 714px auto;
 `;

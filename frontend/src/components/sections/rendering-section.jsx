@@ -6,6 +6,7 @@ import HashInput from "../form/hash-input";
 import Button from "../form/button";
 import Header from "../header";
 import { getRendering } from "../../helpers/api";
+import SidebarLayout from "../layouts/sidebar-layout";
 
 const RenderingSection = () => {
   const [imageSrc, setImageSrc] = createSignal("");
@@ -34,7 +35,7 @@ const RenderingSection = () => {
         >
           <img src={imageSrc()} />
         </ImageContainer>
-        <Sidebar>
+        <SidebarLayout>
           <div>
             <Header text="Load Experiment" sidebar />
             <Fieldset>
@@ -59,7 +60,7 @@ const RenderingSection = () => {
               onClick={() => imageRef.click()}
             />
           </div>
-        </Sidebar>
+        </SidebarLayout>
       </Wrapper>
     </>
   );
@@ -75,11 +76,6 @@ const Wrapper = styled("div")`
 
 const Fieldset = styled("fieldset")`
   width: 256px;
-`;
-
-const Sidebar = styled("div")`
-  display: grid;
-  grid-template-rows: 714px auto;
 `;
 
 const ImageContainer = styled("a")`

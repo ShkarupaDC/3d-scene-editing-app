@@ -1,32 +1,11 @@
-import { createFormControl } from "solid-forms";
-import { mergeProps, Show } from "solid-js";
 import { styled } from "solid-styled-components";
 import icon from "../../assets/copy-ico.svg";
-import ErrorMessage from "./error-message";
+import Field from "./field";
 
 const HashInput = (props) => {
-  props = mergeProps({ control: createFormControl("") }, props);
   return (
     <Wrapper value={!!props.control.value} class="input-wrapper">
-      <input
-        type={`text`}
-        placeholder={` `}
-        id={props.name}
-        name={props.name}
-        value={props.control.value}
-        readonly={props.control.isReadonly}
-        onInput={(event) => {
-          props.control.setValue(event.target.value);
-        }}
-        disabled={props.control.isDisabled}
-      />
-      <label for={props.name}>{props.placeholder}</label>
-      <Show when={!props.withoutMessage}>
-        <ErrorMessage
-          isValid={props.control.isValid}
-          message={props.control.errors.message}
-        />
-      </Show>
+      <Field {...props} />
       <img
         visibility={props.control.value}
         src={icon}

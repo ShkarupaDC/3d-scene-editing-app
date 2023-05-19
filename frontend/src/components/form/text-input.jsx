@@ -1,32 +1,10 @@
-import { createFormControl } from "solid-forms";
-import { Show, mergeProps, splitProps } from "solid-js";
 import { styled } from "solid-styled-components";
-import ErrorMessage from "./error-message";
+import Field from "./field";
 
 const TextInput = (props) => {
-  props = mergeProps({ control: createFormControl("") }, props);
-  const [ownProps, inputProps] = splitProps(props, ["control"]);
-  const control = () => ownProps.control;
-
   return (
     <Wrapper class="input-wrapper">
-      <input
-        {...inputProps}
-        placeholder={` `}
-        id={inputProps.id ?? inputProps.name}
-        value={inputProps.value ?? control().value}
-        onInput={(event) => {
-          control().setValue(event.target.value);
-        }}
-        onBlur={() => control().markTouched(true)}
-      />
-      <label for={inputProps.name}>{inputProps.placeholder}</label>
-      <Show when={!props.withoutMessage}>
-        <ErrorMessage
-          isValid={props.control.isValid}
-          message={props.control.errors.message}
-        />
-      </Show>
+      <Field {...props} />
     </Wrapper>
   );
 };

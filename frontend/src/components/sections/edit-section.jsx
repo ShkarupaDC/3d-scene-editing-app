@@ -7,6 +7,7 @@ import Header from "../header";
 import { postEditAABB } from "../../helpers/api";
 import { EditAABBViewer3d } from "../../helpers/3d-viewer";
 import RadioInput from "../form/radio-input";
+import SidebarLayout from "../layouts/sidebar-layout";
 
 const storage = localStorage;
 
@@ -52,57 +53,53 @@ const EditSection = () => {
 
   return (
     <>
-      <Header text="Edit scene" />
+      <Header text="Edit scene AABB" />
       <Wrapper>
         <div>{viewer.canvas}</div>
-        <Sidebar>
+        <SidebarLayout>
           <div>
-            <Sidebar>
-              <div>
-                <Header text={`Region`} sidebar />
-                <Fieldset>
-                  <RadioInput
-                    name={`region-edit`}
-                    id={`region-edit-inner`}
-                    value={`inner`}
-                    placeholder={`Inner`}
-                    onChange={(event) => region.setValue(event.target.value)}
-                  />
-                  <RadioInput
-                    name={`region-edit`}
-                    id={`region-edit-outer`}
-                    value={`outer`}
-                    placeholder={`Outer`}
-                    checked
-                    onChange={(event) => region.setValue(event.target.value)}
-                  />
-                </Fieldset>
-                <Header text={`Load Experiment`} sidebar />
-                <Fieldset>
-                  <HashInput
-                    name={`experimentId`}
-                    placeholder={`Experiment Id`}
-                    control={experimentId}
-                  />
-                  <Button
-                    name={`submit`}
-                    placeholder={`Load`}
-                    type={`button`}
-                    onClick={onLoadMesh}
-                  />
-                </Fieldset>
-              </div>
-              <Button
-                bottom
-                name={`apply`}
-                placeholder={`Apply`}
-                type={`button`}
-                disabled={!experimentId.isValid}
-                onClick={onSubmit}
+            <Header text={`Region`} sidebar />
+            <Fieldset>
+              <RadioInput
+                name={`region-edit`}
+                id={`region-edit-inner`}
+                value={`inner`}
+                placeholder={`Inner`}
+                onChange={(event) => region.setValue(event.target.value)}
               />
-            </Sidebar>
+              <RadioInput
+                name={`region-edit`}
+                id={`region-edit-outer`}
+                value={`outer`}
+                placeholder={`Outer`}
+                checked
+                onChange={(event) => region.setValue(event.target.value)}
+              />
+            </Fieldset>
+            <Header text={`Load Experiment`} sidebar />
+            <Fieldset>
+              <HashInput
+                name={`experimentId`}
+                placeholder={`Experiment Id`}
+                control={experimentId}
+              />
+              <Button
+                name={`submit`}
+                placeholder={`Load`}
+                type={`button`}
+                onClick={onLoadMesh}
+              />
+            </Fieldset>
           </div>
-        </Sidebar>
+          <Button
+            bottom
+            name={`apply`}
+            placeholder={`Apply`}
+            type={`button`}
+            disabled={!experimentId.isValid}
+            onClick={onSubmit}
+          />
+        </SidebarLayout>
       </Wrapper>
     </>
   );
@@ -119,12 +116,4 @@ const Wrapper = styled("section")`
 
 const Fieldset = styled("fieldset")`
   width: 256px;
-`;
-
-const Sidebar = styled("div")`
-  display: grid;
-  grid-template-rows: 714px auto;
-  fieldset {
-    margin-bottom: 32px;
-  }
 `;

@@ -12,7 +12,7 @@ const RadioInput = (props) => {
       <input
         type="radio"
         {...inputProps}
-        id={inputProps.id}
+        id={inputProps.id ?? `${inputProps.name}-${inputProps.value}`}
         value={inputProps.value ?? control().value}
         onInput={(event) => {
           control().setValue(event.target.value);

@@ -1,10 +1,10 @@
 import { onMount, createSignal } from "solid-js";
 import { styled } from "solid-styled-components";
 import { createFormControl } from "solid-forms";
+import arrow from "../../assets/arrow.svg";
 
 import Header from "../header";
 import HashInput from "../form/hash-input";
-import TextInput from "../form/text-input";
 import Button from "../form/button";
 import {
   MaskTool,
@@ -15,6 +15,10 @@ import {
   readJSON,
 } from "../../helpers/image-masks";
 import { postEditImageMasks } from "../../helpers/api";
+import FileInput from "../form/file-input";
+import RadioInput from "../form/radio-input";
+import SectionLayout from "../layouts/section-layout";
+import SidebarLayout from "../layouts/sidebar-layout";
 
 const storage = localStorage;
 
@@ -115,61 +119,62 @@ const EditMaskSection = () => {
   };
 
   return (
-    <>
-      <Header text="Edit scene" />
-      <Wrapper>
-        <div>
-          <Canvas ref={canvas} />
-          {images().length ? (
-            <ImageHTML
-              src={currentImage().src}
-              width={currentImage.width}
-              height={currentImage.height}
-            />
-          ) : (
-            <></>
-          )}
-          <Arrow
-            type="button"
-            ref={buttonPrev}
-            id={"buttonPrev"}
-            onClick={() => onImageChange(-1)}
-          >
-            {"<"}
-          </Arrow>
-          <Arrow
-            type="button"
-            ref={buttonNext}
-            id={"buttonNext"}
-            onClick={() => onImageChange(1)}
-          >
-            {">"}
-          </Arrow>
-        </div>
-        <input
-          type={`file`}
-          id={`files`}
-          name={`files`}
-          onInput={onLoadFiles}
-          accept="image/*,application/json"
-          multiple
-        />
-        <div>
-          {/* onChange={(event) => region.setValue(event.target.value)} */}
-          <TextInput
-            type={`radio`}
-            name={`region`}
-            value={`inner`}
-            placeholder={`Inner`}
-            onChange={(event) => region.setValue(event.target.value)}
+    <SectionLayout header={`Edit scene (Mask)`}>
+      <WorkArea>
+        <Canvas ref={canvas} />
+        {images().length ? (
+          <ImageHTML
+            src={currentImage().src}
+            width={currentImage.width}
+            height={currentImage.height}
           />
-          <TextInput
-            type={`radio`}
-            name={`region`}
-            value={`outer`}
-            placeholder={`Outer`}
-            checked
-            onChange={(event) => region.setValue(event.target.value)}
+        ) : (
+          <></>
+        )}
+        <Arrow
+          type="button"
+          ref={buttonPrev}
+          id={"buttonPrev"}
+          onClick={() => onImageChange(-1)}
+        >
+          <img src={arrow} />
+        </Arrow>
+        <Arrow
+          type="button"
+          ref={buttonNext}
+          id={"buttonNext"}
+          onClick={() => onImageChange(1)}
+        >
+          <img src={arrow} />
+        </Arrow>
+      </WorkArea>
+      <SidebarLayout>
+        <div>
+          <Header text={`Region`} sidebar />
+          <Fieldset>
+            <RadioInput
+              name={`region-edit-mask`}
+              id={`region-edit-mask-inner`}
+              value={`inner`}
+              placeholder={`Inner`}
+              onChange={(event) => region.setValue(event.target.value)}
+            />
+            <RadioInput
+              name={`region-edit-mask`}
+              id={`region-edit-mask-outer`}
+              value={`outer`}
+              placeholder={`Outer`}
+              checked
+              onChange={(event) => region.setValue(event.target.value)}
+            />
+          </Fieldset>
+          <Header text={`Load files`} sidebar />
+          <FileInput
+            id={`files`}
+            name={`files`}
+            onInput={onLoadFiles}
+            accept="image/*,application/json"
+            multiple
           />
         </div>
         <Fieldset left>
@@ -186,24 +191,23 @@ const EditMaskSection = () => {
             onClick={onSubmit}
           />
         </Fieldset>
-      </Wrapper>
-    </>
+      </SidebarLayout>
+    </SectionLayout>
   );
 };
 
 export default EditMaskSection;
 
-const Wrapper = styled.div`
-  position: relative;
+const WorkArea = styled("div")`
+  display: flex;
   justify-content: center;
-  display: grid;
-  gap: 32px;
-  grid-template-columns: auto auto;
+  width: 1000px;
+  position: relative;
 `;
 
 const Canvas = styled.canvas`
-  width: 800px;
-  height: 600px;
+  width: 750px;
+  height: 750px;
   cursor: crosshair;
   outline: 1px solid #212121;
   z-index: 1000;
@@ -211,14 +215,7 @@ const Canvas = styled.canvas`
 `;
 
 const Fieldset = styled("fieldset")`
-  display: ${(props) => (props.left ? "flex" : "block")};
-  width: ${(props) => (props.left ? "1000px" : "96px")};
-  input {
-    width: ${(props) => (props.left ? "872px" : "96px")};
-  }
-  button {
-    width: 128px;
-  }
+  width: 256px;
 `;
 
 const ImageHTML = styled.img`
@@ -226,21 +223,24 @@ const ImageHTML = styled.img`
   left: 0;
   top: 0;
   z-index: 500;
+  max-height: 750px;
+  max-width: 750px;
 `;
 
 const Arrow = styled("button")`
   z-index: 1500;
   position: absolute;
   display: block;
-  top: calc(50% - 30px / 2);
-  width: 30px;
-  height: 30px;
+  top: calc(50% - 48px / 2);
+  width: 48px;
+  height: 48px;
   padding: 0;
   align-items: center;
   justify-content: center;
   opacity: 0.5;
   transition: opacity linear 0.25s;
   background-color: var(--mainColor);
+  color: white;
   &:not(:disabled):hover {
     opacity: 1;
   }
@@ -248,12 +248,15 @@ const Arrow = styled("button")`
     visibility: hidden;
   }
   &#buttonPrev {
-    left: -30px;
+    left: 30px;
     img {
       transform: scaleX(-1);
     }
   }
   &#buttonNext {
-    right: -30px;
+    right: 30px;
+  }
+  img {
+    vertical-align: middle;
   }
 `;

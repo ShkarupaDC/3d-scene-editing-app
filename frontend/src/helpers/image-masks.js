@@ -125,7 +125,7 @@ export class MaskTool {
     this.#position = nextPosition;
   }
 
-  #stopDrawing(event) {
+  #stopDrawing() {
     if (!this.#drawing) {
       return;
     }

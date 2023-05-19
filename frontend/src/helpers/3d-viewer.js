@@ -65,7 +65,7 @@ class Viewer3d {
   }
 
   // TODO: fix
-  #onWindowResize(event) {
+  #onWindowResize() {
     if (
       this.canvas.width !== this.canvas.clientWidth ||
       this.canvas.height !== this.canvas.clientHeight
