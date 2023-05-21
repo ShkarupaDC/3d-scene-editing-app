@@ -11,9 +11,12 @@ const Input = (props) => {
     'control',
     'placeholder',
     'showError',
+    'onInput',
   ]);
   const control = () => ownProps.control;
   const placeholder = () => ownProps.placeholder;
+
+  const setValue = (event) => control().setValue(event.target.value);
 
   return (
     <>
@@ -22,9 +25,7 @@ const Input = (props) => {
         placeholder=' '
         title={placeholder()}
         value={control().value}
-        onInput={(event) => {
-          control().setValue(event.target.value);
-        }}
+        onInput={props.onInput ?? setValue}
         disabled={control().isDisabled}
         readonly={control().isReadonly}
       />

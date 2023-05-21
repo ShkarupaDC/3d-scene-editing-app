@@ -199,18 +199,19 @@ const EditMaskSection = () => {
 export default EditMaskSection;
 
 const WorkArea = styled('div')`
-  display: flex;
   justify-content: center;
   width: 1000px;
   position: relative;
 `;
 
 const Canvas = styled.canvas`
-  width: 750px;
-  height: 750px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
   cursor: crosshair;
   outline: 1px solid #212121;
-  z-index: 1000;
+  z-index: 1000 !important;
   opacity: 0.4;
 `;
 
@@ -220,11 +221,10 @@ const Fieldset = styled('fieldset')`
 
 const ImageHTML = styled.img`
   position: absolute;
-  left: 0;
-  top: 0;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
   z-index: 500;
-  max-height: 750px;
-  max-width: 750px;
 `;
 
 const Arrow = styled('button')`
