@@ -24,7 +24,7 @@ const Input = (props) => {
         {...inputProps}
         placeholder=' '
         title={placeholder()}
-        value={control().value}
+        value={props.value ?? control().value}
         onInput={props.onInput ?? setValue}
         disabled={control().isDisabled}
         readonly={control().isReadonly}

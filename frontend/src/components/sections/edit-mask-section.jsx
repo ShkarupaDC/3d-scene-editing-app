@@ -87,6 +87,7 @@ const EditMaskSection = () => {
       return;
     }
     try {
+      console.log(region.value);
       const masks = await maskTool.getMasks();
       const newExperimentId = await postEditImageMasks(
         email,
