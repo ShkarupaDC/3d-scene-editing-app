@@ -1,20 +1,20 @@
-import { createFormControl } from "solid-forms";
-import { styled } from "solid-styled-components";
+import { createFormControl } from 'solid-forms';
+import { styled } from 'solid-styled-components';
 
-import TextInput from "../form/text-input";
-import Header from "../header";
-import { createEffect, onMount } from "solid-js";
+import TextInput from '../form/inputs/text-input';
+import Header from '../header';
+import { createEffect, onMount } from 'solid-js';
 
 const storage = localStorage;
 
 const EmailSection = () => {
-  const email = createFormControl(storage.getItem("email") ?? "");
+  const email = createFormControl(storage.getItem('email') ?? '');
   let element;
 
   onMount(() => {
     email.setValidators((value) => {
-      if (typeof value === "string" && value.length === 0) {
-        return { message: "Email is missing" };
+      if (typeof value === 'string' && value.length === 0) {
+        return { message: 'Email is missing' };
       }
       if (!element.validity.valid) {
         return { message: element.validationMessage };
@@ -24,15 +24,15 @@ const EmailSection = () => {
   });
   createEffect(() => {
     if (email.isValid) {
-      storage.setItem("email", email.value);
+      storage.setItem('email', email.value);
     } else {
-      storage.removeItem("email");
+      storage.removeItem('email');
     }
   });
 
   return (
     <>
-      <Header text="Email" />
+      <Header text='Email' />
       <Fieldset>
         <TextInput
           type={`email`}
@@ -49,7 +49,7 @@ const EmailSection = () => {
 
 export default EmailSection;
 
-const Fieldset = styled("fieldset")`
+const Fieldset = styled('fieldset')`
   width: 425px;
   max-width: 425px;
   display: flex;

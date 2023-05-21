@@ -1,8 +1,8 @@
-const getStem = (name) => name.slice(0, name.lastIndexOf("."));
+const getStem = (name) => name.slice(0, name.lastIndexOf('.'));
 
 const getFilesStems = (files) => files.map((file) => getStem(file.name));
 
-const isImageFile = (file) => file.type.startsWith("image/");
+const isImageFile = (file) => file.type.startsWith('image/');
 
 export const compareFileName = (first, second) =>
   first.name < second.name ? first : second;
@@ -13,7 +13,7 @@ export const groupFiles = (files) =>
       groups[+isImageFile(file)].push(file);
       return groups;
     },
-    [[], []]
+    [[], []],
   );
 
 const symmetricDifference = (first, second) => {
@@ -30,7 +30,7 @@ const symmetricDifference = (first, second) => {
 
 export const matchImageToCamera = (imageFiles, cameraFiles) =>
   Array.from(
-    symmetricDifference(getFilesStems(imageFiles), getFilesStems(cameraFiles))
+    symmetricDifference(getFilesStems(imageFiles), getFilesStems(cameraFiles)),
   );
 
 export const readImage = (file) => {
@@ -61,24 +61,24 @@ export class MaskTool {
   #defaults;
 
   constructor(canvas, lineWidth) {
-    this.#context = canvas.getContext("2d", { willReadFrequently: true });
-    const maskCanvas = document.createElement("canvas");
-    this.#maskContext = maskCanvas.getContext("2d", {
+    this.#context = canvas.getContext('2d', { willReadFrequently: true });
+    const maskCanvas = document.createElement('canvas');
+    this.#maskContext = maskCanvas.getContext('2d', {
       willReadFrequently: true,
     });
-    this.#color = "#fff";
+    this.#color = '#fff';
     this.#lineWidth = lineWidth;
     this.#defaults = { color: this.#color, lineWidth: this.#lineWidth };
     this.#addEventListeners();
   }
 
   #addEventListeners() {
-    window.addEventListener("mousemove", this.#catchMouseEvent.bind(this));
-    window.addEventListener("keydown", this.#onKeydown.bind(this));
-    this.#canvas.addEventListener("mousedown", this.#startDrawing.bind(this));
-    this.#canvas.addEventListener("mousemove", this.#draw.bind(this));
-    this.#canvas.addEventListener("mouseout", this.#stopDrawing.bind(this));
-    this.#canvas.addEventListener("mouseup", this.#stopDrawing.bind(this));
+    window.addEventListener('mousemove', this.#catchMouseEvent.bind(this));
+    window.addEventListener('keydown', this.#onKeydown.bind(this));
+    this.#canvas.addEventListener('mousedown', this.#startDrawing.bind(this));
+    this.#canvas.addEventListener('mousemove', this.#draw.bind(this));
+    this.#canvas.addEventListener('mouseout', this.#stopDrawing.bind(this));
+    this.#canvas.addEventListener('mouseup', this.#stopDrawing.bind(this));
   }
 
   #catchMouseEvent(event) {
@@ -90,13 +90,13 @@ export class MaskTool {
       return;
     }
     switch (event.key) {
-      case "i":
+      case 'i':
         this.#invertColor();
         break;
-      case "u":
+      case 'u':
         this.#lineWidth += 1;
         break;
-      case "d":
+      case 'd':
         this.#lineWidth = Math.max(this.#lineWidth - 1, 0);
         break;
     }
@@ -116,7 +116,7 @@ export class MaskTool {
     }
     this.#context.beginPath();
     this.#context.strokeStyle = this.#color;
-    this.#context.lineCap = "round";
+    this.#context.lineCap = 'round';
     this.#context.lineWidth = this.#lineWidth;
     this.#context.moveTo(this.#position.x, this.#position.y);
     const nextPosition = this.#getMousePosition(event);
@@ -134,7 +134,7 @@ export class MaskTool {
   }
 
   #invertColor() {
-    this.#color = this.#color === "#000" ? "#fff" : "#000";
+    this.#color = this.#color === '#000' ? '#fff' : '#000';
   }
 
   #getMousePosition(event) {
@@ -146,7 +146,7 @@ export class MaskTool {
   }
 
   #setCanvasImage(context, maskImage = undefined) {
-    if (typeof maskImage === "undefined") {
+    if (typeof maskImage === 'undefined') {
       maskImage = this.#maskImages[this.#maskIdx];
     }
     context.canvas.height = maskImage.height;
@@ -159,7 +159,7 @@ export class MaskTool {
       0,
       0,
       context.canvas.width,
-      context.canvas.height
+      context.canvas.height,
     );
     if (store) {
       this.#maskImages[this.#maskIdx] = maskImage;
@@ -173,7 +173,7 @@ export class MaskTool {
       this.#maskCanvas.toBlob((blob) => {
         this.#clearCanvas(this.#maskContext);
         resolve(blob);
-      })
+      }),
     );
   }
 

@@ -1,5 +1,5 @@
-import { createGlobalStyles, styled } from "solid-styled-components";
-import IndexPage from "./pages";
+import { createGlobalStyles, styled } from 'solid-styled-components';
+import IndexPage from './pages';
 
 const App = () => {
   return (
@@ -23,7 +23,7 @@ const GlobalStyle = createGlobalStyles`
   --outsidePadding: 64px;
 }`;
 
-const Content = styled("section")`
+const Content = styled('section')`
   margin: 64px auto;
   align-items: center;
   justify-content: center;

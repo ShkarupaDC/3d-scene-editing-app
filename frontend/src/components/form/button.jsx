@@ -1,18 +1,18 @@
-import { splitProps } from "solid-js";
-import { styled } from "solid-styled-components";
+import { splitProps } from 'solid-js';
+import { styled } from 'solid-styled-components';
 
 const Button = (props) => {
-  const [ownProps, buttonProps] = splitProps(props, ["placeholder"]);
+  const [ownProps, buttonProps] = splitProps(props, ['placeholder']);
   return (
     <>
-      <Field {...buttonProps}>{ownProps.placeholder}</Field>
+      <ButtonHTML {...buttonProps}>{ownProps.placeholder}</ButtonHTML>
     </>
   );
 };
 
 export default Button;
 
-const Field = styled("button")`
+const ButtonHTML = styled('button')`
   display: block;
   border: 2px solid var(--mainColor);
   transition: background-color 0.25s;

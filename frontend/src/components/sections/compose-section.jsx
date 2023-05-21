@@ -1,23 +1,23 @@
-import { styled } from "solid-styled-components";
-import { createFormControl, createFormArray, bindOwner } from "solid-forms";
-import { For, Show } from "solid-js";
+import { styled } from 'solid-styled-components';
+import { createFormControl, createFormArray, bindOwner } from 'solid-forms';
+import { For, Show } from 'solid-js';
 
-import HashInput from "../form/hash-input";
-import Button from "../form/button";
-import Header from "../header";
-import { ComposeViewer3d } from "../../helpers/3d-viewer";
-import { postRender } from "../../helpers/api";
-import SectionLayout from "../layouts/section-layout";
-import SidebarLayout from "../layouts/sidebar-layout";
+import HashInput from '../form/inputs/hash-input';
+import Button from '../form/button';
+import Header from '../header';
+import { ComposeViewer3d } from '../../helpers/3d-viewer';
+import { postRender } from '../../helpers/api';
+import SectionLayoutWithSidebar from '../layouts/section-layout';
+import SidebarLayout from '../layouts/sidebar-layout';
 
 const MAX_EXPERIMENTS = 5;
 
 const storage = localStorage;
 
 const ComposeSection = () => {
-  const inExperimentId = createFormControl("");
-  const outExperimentId = createFormControl("");
-  const experiments = createFormArray(["111", "123"]);
+  const inExperimentId = createFormControl('');
+  const outExperimentId = createFormControl('');
+  const experiments = createFormArray([]);
 
   const viewer = new ComposeViewer3d();
   viewer.runLoop();
@@ -44,20 +44,20 @@ const ComposeSection = () => {
   };
 
   const onRemoveMesh = (experimentControl, index) => {
-    const meshId = experimentControl.data["meshId"];
+    const meshId = experimentControl.data['meshId'];
     viewer.removeMesh(meshId);
     experiments.removeControl(index());
     inExperimentId.setErrors(null);
   };
 
   const onSubmit = async () => {
-    const email = storage.getItem("email");
+    const email = storage.getItem('email');
     if (!email) {
-      outExperimentId.setErrors({ message: "Email is invalid!" });
+      outExperimentId.setErrors({ message: 'Email is invalid!' });
       return;
     }
     if (!experiments.size) {
-      outExperimentId.setErrors({ message: "There are no scenes to compose" });
+      outExperimentId.setErrors({ message: 'There are no scenes to compose' });
       return;
     }
     try {
@@ -65,7 +65,7 @@ const ComposeSection = () => {
       for (const control of experiments.controls) {
         scenes.push({
           experiment_id: control.value,
-          T: viewer.getMeshTransformMatrix(control.data["meshId"]),
+          T: viewer.getMeshTransformMatrix(control.data['meshId']),
         });
       }
       const camera = {
@@ -77,7 +77,7 @@ const ComposeSection = () => {
         email,
         scenes,
         viewer.imageSize,
-        camera
+        camera,
       );
       outExperimentId.setValue(newExperimentId);
     } catch (error) {
@@ -86,11 +86,11 @@ const ComposeSection = () => {
   };
 
   return (
-    <SectionLayout header={`Compose scenes`}>
+    <SectionLayoutWithSidebar header={`Compose scenes`}>
       <div>{viewer.canvas}</div>
       <SidebarLayout>
         <div>
-          <Header text="Add experiment" sidebar />
+          <Header text='Add experiment' sidebar />
           <Fieldset>
             <HashInput
               name={`experimentId`}
@@ -105,7 +105,7 @@ const ComposeSection = () => {
             />
           </Fieldset>
           <Show when={!!experiments.value.length}>
-            <Header text="Experiments" sidebar />
+            <Header text='Experiments' sidebar />
             <Fieldsets>
               <For each={experiments.controls}>
                 {(experimentControl, index) => (
@@ -114,7 +114,7 @@ const ComposeSection = () => {
                       name={`experimentId_${index()}`}
                       placeholder={`Experiment Id`}
                       control={experimentControl}
-                      withoutMessage
+                      showError={false}
                       disabled
                     />
                     <Button
@@ -146,17 +146,17 @@ const ComposeSection = () => {
           </Fieldset>
         </div>
       </SidebarLayout>
-    </SectionLayout>
+    </SectionLayoutWithSidebar>
   );
 };
 
 export default ComposeSection;
 
-const Fieldset = styled("fieldset")`
+const Fieldset = styled('fieldset')`
   width: 256px;
 `;
 
-const Fieldsets = styled("fieldset")`
+const Fieldsets = styled('fieldset')`
   display: block;
   row-gap: 24px;
   flex-wrap: wrap;

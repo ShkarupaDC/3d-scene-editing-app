@@ -1,11 +1,15 @@
-import { onMount, createSignal } from "solid-js";
-import { styled } from "solid-styled-components";
-import { createFormControl } from "solid-forms";
-import arrow from "../../assets/arrow.svg";
+import { onMount, createSignal, createEffect } from 'solid-js';
+import { styled } from 'solid-styled-components';
+import { createFormControl } from 'solid-forms';
+import arrow from '../../assets/arrow.svg';
 
-import Header from "../header";
-import HashInput from "../form/hash-input";
-import Button from "../form/button";
+import Header from '../header';
+import HashInput from '../form/inputs/hash-input';
+import FileInput from '../form/inputs/file-input';
+import RadioInput from '../form/inputs/radio-input';
+import SectionLayoutWithSidebar from '../layouts/section-layout';
+import SidebarLayout from '../layouts/sidebar-layout';
+import Button from '../form/button';
 import {
   MaskTool,
   groupFiles,
@@ -13,18 +17,14 @@ import {
   matchImageToCamera,
   readImage,
   readJSON,
-} from "../../helpers/image-masks";
-import { postEditImageMasks } from "../../helpers/api";
-import FileInput from "../form/file-input";
-import RadioInput from "../form/radio-input";
-import SectionLayout from "../layouts/section-layout";
-import SidebarLayout from "../layouts/sidebar-layout";
+} from '../../helpers/image-masks';
+import { postEditImageMasks } from '../../helpers/api';
 
 const storage = localStorage;
 
 const EditMaskSection = () => {
-  const inExperimentId = createFormControl("");
-  const region = createFormControl("outer");
+  const inExperimentId = createFormControl('');
+  const region = createFormControl('outer');
   const [images, setImages] = createSignal([]);
   const [cameras, setCameras] = createSignal([]);
 
@@ -41,7 +41,7 @@ const EditMaskSection = () => {
     inExperimentId.setErrors(null);
 
     if (!event.target.files.length) {
-      inExperimentId.setErrors({ message: "Files are missing" });
+      inExperimentId.setErrors({ message: 'Files are missing' });
       return;
     }
     const files = Array.from(event.target.files);
@@ -51,7 +51,7 @@ const EditMaskSection = () => {
     if (notMatched.length) {
       inExperimentId.setErrors({
         message: `Camera JSON or image is missing for ${notMatched.join(
-          ", "
+          ', ',
         )} files`,
       });
       return;
@@ -73,17 +73,17 @@ const EditMaskSection = () => {
   };
 
   const onSubmit = async () => {
-    const email = storage.getItem("email");
+    const email = storage.getItem('email');
     if (!email) {
-      inExperimentId.setErrors({ message: "Email is invalid!" });
+      inExperimentId.setErrors({ message: 'Email is invalid!' });
       return;
     }
     if (!images().length) {
-      inExperimentId.setErrors({ message: "Images are missing" });
+      inExperimentId.setErrors({ message: 'Images are missing' });
       return;
     }
     if (!inExperimentId.value.length) {
-      inExperimentId.setErrors({ message: "Base experiment id is missing" });
+      inExperimentId.setErrors({ message: 'Base experiment id is missing' });
       return;
     }
     try {
@@ -93,7 +93,7 @@ const EditMaskSection = () => {
         inExperimentId.value,
         masks,
         cameras(),
-        region.value === "inner"
+        region.value === 'inner',
       );
       inExperimentId.setValue(newExperimentId);
     } catch (error) {
@@ -107,7 +107,7 @@ const EditMaskSection = () => {
     }
     const nextIdx = Math.max(
       0,
-      Math.min(currentIdx() + direction, numImages() - 1)
+      Math.min(currentIdx() + direction, numImages() - 1),
     );
     if (currentIdx() === nextIdx) {
       return;
@@ -118,8 +118,10 @@ const EditMaskSection = () => {
     maskTool.setMask(currentIdx());
   };
 
+  createEffect(() => console.log(images()));
+
   return (
-    <SectionLayout header={`Edit scene (Mask)`}>
+    <SectionLayoutWithSidebar header={`Edit scene with image masks`}>
       <WorkArea>
         <Canvas ref={canvas} />
         {images().length ? (
@@ -132,17 +134,17 @@ const EditMaskSection = () => {
           <></>
         )}
         <Arrow
-          type="button"
+          type='button'
           ref={buttonPrev}
-          id={"buttonPrev"}
+          id={'buttonPrev'}
           onClick={() => onImageChange(-1)}
         >
           <img src={arrow} />
         </Arrow>
         <Arrow
-          type="button"
+          type='button'
           ref={buttonNext}
-          id={"buttonNext"}
+          id={'buttonNext'}
           onClick={() => onImageChange(1)}
         >
           <img src={arrow} />
@@ -173,7 +175,7 @@ const EditMaskSection = () => {
             id={`files`}
             name={`files`}
             onInput={onLoadFiles}
-            accept="image/*,application/json"
+            accept='image/*,application/json'
             multiple
           />
         </div>
@@ -192,13 +194,13 @@ const EditMaskSection = () => {
           />
         </Fieldset>
       </SidebarLayout>
-    </SectionLayout>
+    </SectionLayoutWithSidebar>
   );
 };
 
 export default EditMaskSection;
 
-const WorkArea = styled("div")`
+const WorkArea = styled('div')`
   display: flex;
   justify-content: center;
   width: 1000px;
@@ -214,7 +216,7 @@ const Canvas = styled.canvas`
   opacity: 0.4;
 `;
 
-const Fieldset = styled("fieldset")`
+const Fieldset = styled('fieldset')`
   width: 256px;
 `;
 
@@ -227,7 +229,7 @@ const ImageHTML = styled.img`
   max-width: 750px;
 `;
 
-const Arrow = styled("button")`
+const Arrow = styled('button')`
   z-index: 1500;
   position: absolute;
   display: block;

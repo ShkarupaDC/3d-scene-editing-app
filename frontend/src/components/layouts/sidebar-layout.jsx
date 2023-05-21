@@ -1,4 +1,4 @@
-import { styled } from "solid-styled-components";
+import { styled } from 'solid-styled-components';
 
 const SidebarLayout = (props) => {
   return <Wrapper>{props.children}</Wrapper>;
@@ -6,7 +6,7 @@ const SidebarLayout = (props) => {
 
 export default SidebarLayout;
 
-const Wrapper = styled("div")`
+const Wrapper = styled('div')`
   display: grid;
   grid-template-rows: 714px auto;
   fieldset {

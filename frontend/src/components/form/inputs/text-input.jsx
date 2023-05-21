@@ -1,17 +1,17 @@
-import { styled } from "solid-styled-components";
-import Field from "./field";
+import { styled } from 'solid-styled-components';
+import Input from '../input';
 
 const TextInput = (props) => {
   return (
-    <Wrapper class="input-wrapper">
-      <Field {...props} />
+    <Wrapper class='input-wrapper'>
+      <Input type='text' {...props} />
     </Wrapper>
   );
 };
 
 export default TextInput;
 
-const Wrapper = styled("div")`
+const Wrapper = styled('div')`
   input {
     border-width: 0 0 2px;
     &:focus ~ label,

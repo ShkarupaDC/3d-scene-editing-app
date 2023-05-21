@@ -1,7 +1,7 @@
-import { styled } from "solid-styled-components";
-import Header from "../header";
+import { styled } from 'solid-styled-components';
+import Header from '../header';
 
-const SectionLayout = (props) => {
+const SectionLayoutWithSidebar = (props) => {
   return (
     <>
       <Header text={props.header} />
@@ -10,9 +10,9 @@ const SectionLayout = (props) => {
   );
 };
 
-export default SectionLayout;
+export default SectionLayoutWithSidebar;
 
-const Wrapper = styled("section")`
+const Wrapper = styled('section')`
   position: relative;
   justify-content: center;
   display: grid;

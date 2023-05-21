@@ -1,25 +1,25 @@
-import { styled } from "solid-styled-components";
-import { createFormControl, createFormGroup } from "solid-forms";
+import { styled } from 'solid-styled-components';
+import { createFormControl, createFormGroup } from 'solid-forms';
 
-import TextInput from "../form/text-input";
-import HashInput from "../form/hash-input";
-import Button from "../form/button";
-import Header from "../header";
-import { postTrain } from "../../helpers/api";
+import TextInput from '../form/inputs/text-input';
+import HashInput from '../form/inputs/hash-input';
+import Button from '../form/button';
+import Header from '../header';
+import { postTrain } from '../../helpers/api';
 
 const storage = localStorage;
 
 const TrainSection = () => {
   const group = createFormGroup({
-    dataURL: createFormControl(""),
-    experimentId: createFormControl("", { readonly: true, disabled: true }),
+    dataURL: createFormControl(''),
+    experimentId: createFormControl('', { readonly: true, disabled: true }),
   });
   const controls = () => group.controls;
 
   const onSubmit = async () => {
-    const email = storage.getItem("email");
+    const email = storage.getItem('email');
     if (!email) {
-      controls().dataURL.patchErrors({ message: "Email is invalid!" });
+      controls().dataURL.patchErrors({ message: 'Email is invalid!' });
       return;
     }
     if (!controls().dataURL.isValid) {
@@ -41,7 +41,7 @@ const TrainSection = () => {
 
   return (
     <>
-      <Header text="Train" />
+      <Header text='Train' />
       <Wrapper>
         <Container>
           <form>
@@ -76,17 +76,17 @@ const TrainSection = () => {
 
 export default TrainSection;
 
-const Wrapper = styled("section")`
+const Wrapper = styled('section')`
   display: flex;
   margin: 50px auto;
   justify-content: center;
 `;
 
-const Fieldset = styled("fieldset")`
+const Fieldset = styled('fieldset')`
   bottom: 0;
 `;
 
-const Container = styled("div")`
+const Container = styled('div')`
   width: 425px;
   position: relative;
 `;

@@ -1,13 +1,13 @@
-import * as THREE from "three";
-import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader";
-import { TransformControls } from "three/examples/jsm/controls/TransformControls";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import * as THREE from 'three';
+import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import { handleAPIError, API_URL } from "./api";
+import { handleAPIError, API_URL } from './api';
 
-const TRANSLATE_KEY = "t";
-const SCALE_KEY = "s";
-const ROTATE_KEY = "r";
+const TRANSLATE_KEY = 't';
+const SCALE_KEY = 's';
+const ROTATE_KEY = 'r';
 
 const arrayToMatrix = (array, columns) =>
   array.reduce(
@@ -15,7 +15,7 @@ const arrayToMatrix = (array, columns) =>
       (index % columns == 0
         ? rows.push([key])
         : rows[rows.length - 1].push(key)) && rows,
-    []
+    [],
   );
 
 const arrayToSquareMatrix = (array) =>
@@ -48,8 +48,8 @@ class Viewer3d {
     this._cameraControl = new OrbitControls(this._camera, this.canvas); // TrackballControls does not work
     this._cameraControl.update();
 
-    window.addEventListener("mousemove", this.#catchMouseEvent.bind(this));
-    window.addEventListener("resize", this.#onWindowResize.bind(this));
+    window.addEventListener('mousemove', this.#catchMouseEvent.bind(this));
+    window.addEventListener('resize', this.#onWindowResize.bind(this));
   }
 
   get canvas() {
@@ -73,7 +73,7 @@ class Viewer3d {
       this.#renderer.setSize(
         this.canvas.clientWidth,
         this.canvas.clientHeight,
-        false
+        false,
       );
       this._camera.aspect = this.canvas.clientWidth / this.canvas.clientHeight;
       this._camera.updateProjectionMatrix();
@@ -88,7 +88,7 @@ class Viewer3d {
     let geometry;
     try {
       geometry = await this.#meshLoader.loadAsync(
-        `${API_URL}/experiment/${experimentId}/mesh`
+        `${API_URL}/experiment/${experimentId}/mesh`,
       );
     } catch (error) {
       if (error?.response) {
@@ -127,10 +127,10 @@ export class EditAABBViewer3d extends Viewer3d {
     this.#hideAABB();
 
     this.#control.addEventListener(
-      "dragging-changed", // dragging is a control property
-      this._disableCamera.bind(this)
+      'dragging-changed', // dragging is a control property
+      this._disableCamera.bind(this),
     );
-    window.addEventListener("keydown", this.#onKeydown.bind(this));
+    window.addEventListener('keydown', this.#onKeydown.bind(this));
   }
 
   #getAABBWireframe(size = 1, color = 0x000000) {
@@ -155,10 +155,10 @@ export class EditAABBViewer3d extends Viewer3d {
   #setControlMode(event) {
     switch (event.key) {
       case TRANSLATE_KEY:
-        this.#control.setMode("translate");
+        this.#control.setMode('translate');
         break;
       case SCALE_KEY:
-        this.#control.setMode("scale");
+        this.#control.setMode('scale');
         break;
     }
   }
@@ -221,7 +221,7 @@ export class ComposeViewer3d extends Viewer3d {
   constructor(...args) {
     super(...args);
     this.#raycaster = new THREE.Raycaster();
-    window.addEventListener("keydown", this.#onKeydown.bind(this));
+    window.addEventListener('keydown', this.#onKeydown.bind(this));
   }
 
   #onKeydown(event) {
@@ -246,13 +246,13 @@ export class ComposeViewer3d extends Viewer3d {
   #setControlMode(event, control) {
     switch (event.key) {
       case TRANSLATE_KEY:
-        control.setMode("translate");
+        control.setMode('translate');
         break;
       case ROTATE_KEY:
-        control.setMode("rotate");
+        control.setMode('rotate');
         break;
       case SCALE_KEY:
-        control.setMode("scale");
+        control.setMode('scale');
         break;
     }
   }
@@ -294,8 +294,8 @@ export class ComposeViewer3d extends Viewer3d {
     const control = new TransformControls(this._camera, this.canvas);
     control.attach(mesh);
     control.addEventListener(
-      "dragging-changed",
-      this._disableCamera.bind(this)
+      'dragging-changed',
+      this._disableCamera.bind(this),
     );
     this._scene.add(control);
     this.#connectMeshToControl(mesh, control);
