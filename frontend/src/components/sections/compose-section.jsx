@@ -51,6 +51,7 @@ const ComposeSection = () => {
   };
 
   const onSubmit = async () => {
+    outExperimentId.setErrors(null);
     const email = storage.getItem('email');
     if (!email) {
       outExperimentId.setErrors({ message: 'Email is invalid!' });

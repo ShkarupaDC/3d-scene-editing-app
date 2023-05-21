@@ -73,6 +73,7 @@ const EditMaskSection = () => {
   };
 
   const onSubmit = async () => {
+    inExperimentId.setErrors(null);
     const email = storage.getItem('email');
     if (!email) {
       inExperimentId.setErrors({ message: 'Email is invalid!' });
@@ -87,7 +88,6 @@ const EditMaskSection = () => {
       return;
     }
     try {
-      console.log(region.value);
       const masks = await maskTool.getMasks();
       const newExperimentId = await postEditImageMasks(
         email,
@@ -200,9 +200,11 @@ const EditMaskSection = () => {
 export default EditMaskSection;
 
 const WorkArea = styled('div')`
+  position: relative;
   justify-content: center;
   width: 1000px;
-  position: relative;
+  min-height: 800px;
+  height: fit-content;
 `;
 
 const Canvas = styled.canvas`
@@ -211,8 +213,8 @@ const Canvas = styled.canvas`
   top: 50%;
   translate: -50% -50%;
   cursor: crosshair;
-  outline: 1px solid #212121;
-  z-index: 1000 !important;
+  outline: none;
+  z-index: 1000;
   opacity: 0.4;
 `;
 
@@ -232,9 +234,9 @@ const Arrow = styled('button')`
   z-index: 1500;
   position: absolute;
   display: block;
-  top: calc(50% - 48px / 2);
-  width: 48px;
-  height: 48px;
+  top: calc(50% - 30px / 2);
+  width: 30px;
+  height: 30px;
   padding: 0;
   align-items: center;
   justify-content: center;
@@ -259,5 +261,7 @@ const Arrow = styled('button')`
   }
   img {
     vertical-align: middle;
+    margin: auto;
+    width: 35%;
   }
 `;
