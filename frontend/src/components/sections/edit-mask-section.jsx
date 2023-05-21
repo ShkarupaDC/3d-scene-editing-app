@@ -1,4 +1,4 @@
-import { onMount, createSignal, createEffect } from 'solid-js';
+import { onMount, createSignal } from 'solid-js';
 import { styled } from 'solid-styled-components';
 import { createFormControl } from 'solid-forms';
 import arrow from '../../assets/arrow.svg';
@@ -117,8 +117,6 @@ const EditMaskSection = () => {
     buttonNext.disabled = currentIdx() === Math.max(0, numImages() - 1);
     maskTool.setMask(currentIdx());
   };
-
-  createEffect(() => console.log(images()));
 
   return (
     <SectionLayoutWithSidebar header={`Edit scene with image masks`}>

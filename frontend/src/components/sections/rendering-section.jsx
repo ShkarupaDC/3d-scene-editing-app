@@ -14,6 +14,7 @@ const RenderingSection = () => {
   let imageRef;
 
   const fetchRendering = async () => {
+    experimentId.setErrors(null);
     if (!experimentId.isValid) {
       return;
     }

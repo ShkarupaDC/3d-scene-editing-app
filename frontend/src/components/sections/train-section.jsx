@@ -17,6 +17,7 @@ const TrainSection = () => {
   const controls = () => group.controls;
 
   const onSubmit = async () => {
+    controls().dataURL.setErrors(null);
     const email = storage.getItem('email');
     if (!email) {
       controls().dataURL.patchErrors({ message: 'Email is invalid!' });
@@ -30,7 +31,6 @@ const TrainSection = () => {
         const experimentId = await postTrain(email, controls().dataURL.value);
         controls().experimentId.setValue(experimentId);
         controls().experimentId.markDisabled(false);
-        group.markSubmitted(true);
       } catch (error) {
         controls().dataURL.patchErrors({ message: error.message });
       } finally {
