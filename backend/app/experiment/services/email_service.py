@@ -26,9 +26,9 @@ class EmailService:
         self.start_TLS = start_TLS
 
     async def send_email(self, message: email.message.EmailMessage) -> None:
-        await asyncio.sleep(3)
-        logger.info(message.as_string())
-        return
+        # await asyncio.sleep(3)
+        logger.info(f"Email is sent! {message['Subject']}")
+        # return
         await aiosmtplib.send(message=message,
                               hostname=self.smtp_host,
                               port=self.smtp_port,

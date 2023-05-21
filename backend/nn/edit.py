@@ -45,9 +45,9 @@ class EditConfig:
 
 
 @torch.no_grad()
-def get_aabb_volume_mask(model: CCNeRF,
+def set_aabb_volume_mask(model: CCNeRF,
                          aabb: torch.Tensor,
-                         inner_region: bool = True) -> torch.Tensor:
+                         inner_region: bool = True) -> None:
     assert aabb.shape == (2, 3), aabb.shape
     if torch.any(aabb[0] < model.aabb[0]) or torch.any(
             aabb[1] > model.aabb[1]):
@@ -57,32 +57,22 @@ def get_aabb_volume_mask(model: CCNeRF,
         aabb[0].clip_(model.aabb[0], model.aabb[1])
         aabb[1].clip_(model.aabb[0], model.aabb[1])
 
-    device = model.device
-    alpha_grid: torch.Tensor = model.alphaMask.alpha_volume  # 1, 1, D, H, W
-
-    alpha_grid_size = torch.tensor(alpha_grid.shape[-1:1:-1],
-                                   device=device)  # W, H, D
-    aabb = alpha_grid_size * (aabb - model.aabb[0]) / model.aabbSize
-    x_min, y_min, z_min = aabb[0].floor().to(torch.int)
-    x_max, y_max, z_max = aabb[1].ceil().to(torch.int)
-
-    # NOTE(dsh): can be done inplace
     if inner_region:
-        new_alpha_grid = torch.zeros_like(alpha_grid)
-        new_alpha_grid[..., z_min:z_max, y_min:y_max,
-                       x_min:x_max] = alpha_grid[..., z_min:z_max, y_min:y_max,
-                                                 x_min:x_max]
+        model.shrink(aabb)
     else:
-        new_alpha_grid = alpha_grid.clone()
-        new_alpha_grid[..., z_min:z_max, y_min:y_max, x_min:x_max] = 0
-    return new_alpha_grid
+        alpha_grid: torch.Tensor = model.alphaMask.alpha_volume  # 1, 1, D, H, W
+        alpha_grid_size = torch.tensor(alpha_grid.shape[-1:1:-1],
+                                       device=model.device)  # W, H, D
+        aabb = alpha_grid_size * (aabb - model.aabb[0]) / model.aabbSize
+        x_min, y_min, z_min = aabb[0].floor().to(torch.int)
+        x_max, y_max, z_max = aabb[1].ceil().to(torch.int)
+        alpha_grid[..., z_min:z_max, y_min:y_max, x_min:x_max] = 0
 
 
 @torch.no_grad()
-def get_image_mask_based_volume_mask(
-        model: CCNeRF,
-        image_masks: List[ImageMask],
-        inner_region: bool = True) -> torch.Tensor:
+def set_image_mask_based_volume_mask(model: CCNeRF,
+                                     image_masks: List[ImageMask],
+                                     inner_region: bool = True) -> None:
     assert image_masks, "Image masks are not found"
     mask_count = len(image_masks)
 
@@ -122,10 +112,22 @@ def get_image_mask_based_volume_mask(
 
     zero = torch.tensor(0, dtype=torch.float, device=device)
     if inner_region:
-        new_alpha_grid = torch.where(vote_grid >= mask_count, alpha_grid, zero)
+        torch.where(vote_grid >= mask_count,
+                    alpha_grid,
+                    zero,
+                    out=model.alphaMask.alpha_volume)
+        occupied_cells = torch.nonzero(model.alphaMask.alpha_volume)
+        aabb_min = model.aabb[0] + (occupied_cells.min(dim=0).values /
+                                    model.gridSize) * model.aabbSize
+        aabb_max = model.aabb[0] + (occupied_cells.max(dim=0).values /
+                                    model.gridSize) * model.aabbSize
+        new_aabb = torch.stack([aabb_min, aabb_max])
+        model.shrink(new_aabb)
     else:
-        new_alpha_grid = torch.where(vote_grid >= mask_count, zero, alpha_grid)
-    return new_alpha_grid
+        torch.where(vote_grid >= mask_count,
+                    zero,
+                    alpha_grid,
+                    out=model.alphaMask.alpha_volume)
 
 
 @torch.no_grad()
@@ -133,13 +135,11 @@ def edit_scene(config: EditConfig, device: Device = "cpu") -> None:
     model = load_model(config.base_model_path, device=device)
     if config.aabb is not None:
         aabb = config.aabb.to(device)
-        volume_mask = get_aabb_volume_mask(model,
-                                           aabb,
-                                           inner_region=config.inner_region)
+        set_aabb_volume_mask(model, aabb, inner_region=config.inner_region)
     else:
         assert config.image_masks is not None
-        volume_mask = get_image_mask_based_volume_mask(
-            model, config.image_masks, inner_region=config.inner_region)
-    model.alphaMask = AlphaGridMask(device, volume_mask)
+        set_image_mask_based_volume_mask(model,
+                                         config.image_masks,
+                                         inner_region=config.inner_region)
     model.save(config.model_path, K=5)  # K=5 means the best resolution
     export_mesh(model, config.mesh_path, device=device)

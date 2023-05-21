@@ -47,15 +47,13 @@ if __name__ == "__main__":
     logging.getLogger().setLevel(getattr(logging, args.log_level))
     device = torch.device(args.device)
     if device.type == "cuda":
-        torch.cuda.set_device(device.index)
+        torch.cuda.set_device(device.index or 0)
 
     if args.command == "train":
         train_config = TrainConfig.from_json(read_json(args.config_path))
         logger.info(f"Train config:\n{train_config}")
         try:
             train_scene(train_config, device)
-            # time.sleep(30 * 60)
-            # raise RuntimeError("Train config is bad!")
         except Exception:
             logger.exception("Exception occured when training scene!")
             raise
@@ -64,8 +62,6 @@ if __name__ == "__main__":
         logger.info(f"Edit config:\n{edit_config}")
         try:
             edit_scene(edit_config, device=device)
-            # time.sleep(5)
-            # raise RuntimeError("Edit config is bad!")
         except Exception:
             logger.exception("Exception occured when editing scene!")
             raise
@@ -75,8 +71,6 @@ if __name__ == "__main__":
         logger.info(f"Render config:\n{render_config}")
         try:
             render_scene(render_config, device=device)
-            # time.sleep(20)
-            # raise RuntimeError("Render config is bad!")
         except Exception:
             logger.exception("Exception occured when rendering scenes!")
             raise
