@@ -1,5 +1,5 @@
 import { createFormControl } from 'solid-forms';
-import { mergeProps } from 'solid-js';
+import { mergeProps, Show } from 'solid-js';
 import { styled } from 'solid-styled-components';
 import icon from '../../assets/copy-ico.svg';
 
