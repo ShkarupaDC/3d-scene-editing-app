@@ -22,7 +22,6 @@ const ComposeSection = () => {
   onMount(() => {
     viewer = new ComposeViewer3d(canvas);
     viewer.runLoop();
-    return viewer;
   });
 
   const onLoadMesh = async () => {

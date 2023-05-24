@@ -19,7 +19,6 @@ const EditSection = () => {
   onMount(() => {
     viewer = new EditAABBViewer3d(canvas);
     viewer.runLoop();
-    return viewer;
   });
 
   const onSubmit = async () => {
