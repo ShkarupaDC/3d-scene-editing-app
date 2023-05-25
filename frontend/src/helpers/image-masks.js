@@ -59,13 +59,15 @@ export class MaskTool {
   #lineWidth;
   #color;
   #defaults;
+  #cursor;
 
-  constructor(canvas, lineWidth) {
+  constructor(canvas, cursor, lineWidth) {
     this.#context = canvas.getContext('2d', { willReadFrequently: true });
     const maskCanvas = document.createElement('canvas');
     this.#maskContext = maskCanvas.getContext('2d', {
       willReadFrequently: true,
     });
+    this.#cursor = cursor;
     this.#color = '#fff';
     this.#lineWidth = lineWidth;
     this.#defaults = { color: this.#color, lineWidth: this.#lineWidth };
@@ -79,6 +81,11 @@ export class MaskTool {
     this.#canvas.addEventListener('mousemove', this.#draw.bind(this));
     this.#canvas.addEventListener('mouseout', this.#stopDrawing.bind(this));
     this.#canvas.addEventListener('mouseup', this.#stopDrawing.bind(this));
+
+    // cursor
+    this.#canvas.addEventListener('mousemove', this.#moveCursor.bind(this));
+    this.#canvas.addEventListener('mouseenter', this.#showCursor.bind(this));
+    this.#canvas.addEventListener('mouseout', this.#hideCursor.bind(this));
   }
 
   #catchMouseEvent(event) {
@@ -89,15 +96,17 @@ export class MaskTool {
     if (!this.#mouseEvent || this.#mouseEvent.target !== this.#canvas) {
       return;
     }
-    switch (event.key) {
-      case 'i':
+    switch (event.code) {
+      case 'KeyI':
         this.#invertColor();
         break;
-      case 'u':
+      case 'KeyU':
         this.#lineWidth += 1;
+        this.#changeCursorSize();
         break;
-      case 'd':
+      case 'KeyD':
         this.#lineWidth = Math.max(this.#lineWidth - 1, 0);
+        this.#changeCursorSize();
         break;
     }
   }
@@ -188,6 +197,27 @@ export class MaskTool {
 
   #clearCanvas(context) {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+  }
+
+  #changeCursorSize() {
+    this.#cursor.style.width = this.#cursor.style.height = `${
+      this.#lineWidth
+    }px`;
+  }
+
+  #moveCursor(event) {
+    const cursorRadius = this.#lineWidth / 2;
+    this.#cursor.style.left = `${event.clientX - cursorRadius}px`;
+    this.#cursor.style.top = `${event.clientY - cursorRadius}px`;
+  }
+
+  #showCursor(event) {
+    this.#changeCursorSize();
+    this.#cursor.classList.add('block');
+  }
+
+  #hideCursor(event) {
+    this.#cursor.classList.remove('block');
   }
 
   get #canvas() {

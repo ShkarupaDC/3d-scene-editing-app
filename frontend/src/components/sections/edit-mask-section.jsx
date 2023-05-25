@@ -1,4 +1,4 @@
-import { onMount, createSignal } from 'solid-js';
+import { onMount, createSignal, createEffect } from 'solid-js';
 import { styled } from 'solid-styled-components';
 import { createFormControl } from 'solid-forms';
 
@@ -26,12 +26,14 @@ const EditMaskSection = () => {
 
   const [currentIdx, setCurrentIdx] = createSignal(0);
   let buttonNext, buttonPrev;
-  let canvas, maskTool;
+  let canvas, cursor, maskTool;
 
   const currentImage = () => images()[currentIdx()];
   const numImages = () => images().length;
 
-  onMount(() => (maskTool = new MaskTool(canvas, 24)));
+  onMount(() => {
+    maskTool = new MaskTool(canvas, cursor, 24);
+  });
 
   const onLoadFiles = async (event) => {
     inExperimentId.setErrors(null);
@@ -118,6 +120,7 @@ const EditMaskSection = () => {
     <>
       <Header text="Edit scene" />
       <Wrapper>
+        <Cursor ref={cursor} />
         <Canvas ref={canvas} />
         {images().length ? (
           <ImageHTML
@@ -197,13 +200,21 @@ const Wrapper = styled.div`
 `;
 
 const Canvas = styled.canvas`
-  cursor: crosshair;
+  cursor: none;
   position: absolute;
   left: 0;
   top: 0;
   outline: 1px solid #212121;
   z-index: 1000;
   opacity: 0.4;
+`;
+
+const Cursor = styled.span`
+  display: none;
+  border: 1px solid #212121;
+  border-radius: 50%;
+  position: fixed;
+  z-index: 750;
 `;
 
 const Fieldset = styled('fieldset')`

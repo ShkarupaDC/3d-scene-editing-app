@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap');
 
 *,
 *::before,
@@ -11,7 +11,7 @@ body,
 .wrapper-input {
   padding: 0;
   margin: 0;
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 500;
 }
 
@@ -24,6 +24,10 @@ body,
   height: 40px;
 }
 
+.block {
+  display: block !important;
+}
+
 fieldset {
   border: none;
   margin: 0;
@@ -34,7 +38,7 @@ input,
 button {
   display: block;
   box-sizing: border-box;
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 500;
   width: 100%;
   background-color: transparent;
