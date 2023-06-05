@@ -4,6 +4,14 @@ const getFilesStems = (files) => files.map((file) => getStem(file.name));
 
 const isImageFile = (file) => file.type.startsWith('image/');
 
+const toolsConfig = {
+  keys: {
+    invertColor: 'KeyI',
+    increment: 'KeyU',
+    decrement: 'KeyD',
+  },
+};
+
 export const compareFileName = (first, second) =>
   first.name < second.name ? first : second;
 
@@ -61,13 +69,12 @@ export class MaskTool {
   #defaults;
   #cursor;
 
-  constructor(canvas, cursor, lineWidth) {
+  constructor(canvas, lineWidth) {
     this.#context = canvas.getContext('2d', { willReadFrequently: true });
     const maskCanvas = document.createElement('canvas');
     this.#maskContext = maskCanvas.getContext('2d', {
       willReadFrequently: true,
     });
-    this.#cursor = cursor;
     this.#color = '#fff';
     this.#lineWidth = lineWidth;
     this.#defaults = { color: this.#color, lineWidth: this.#lineWidth };
@@ -81,11 +88,6 @@ export class MaskTool {
     this.#canvas.addEventListener('mousemove', this.#draw.bind(this));
     this.#canvas.addEventListener('mouseout', this.#stopDrawing.bind(this));
     this.#canvas.addEventListener('mouseup', this.#stopDrawing.bind(this));
-
-    // cursor
-    this.#canvas.addEventListener('mousemove', this.#moveCursor.bind(this));
-    this.#canvas.addEventListener('mouseenter', this.#showCursor.bind(this));
-    this.#canvas.addEventListener('mouseout', this.#hideCursor.bind(this));
   }
 
   #catchMouseEvent(event) {
@@ -97,16 +99,14 @@ export class MaskTool {
       return;
     }
     switch (event.code) {
-      case 'KeyI':
+      case toolsConfig.keys.invertColor:
         this.#invertColor();
         break;
-      case 'KeyU':
+      case toolsConfig.keys.increment:
         this.#lineWidth += 1;
-        this.#changeCursorSize();
         break;
-      case 'KeyD':
+      case toolsConfig.keys.decrement:
         this.#lineWidth = Math.max(this.#lineWidth - 1, 0);
-        this.#changeCursorSize();
         break;
     }
   }
@@ -199,27 +199,6 @@ export class MaskTool {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
   }
 
-  #changeCursorSize() {
-    this.#cursor.style.width = this.#cursor.style.height = `${
-      this.#lineWidth
-    }px`;
-  }
-
-  #moveCursor(event) {
-    const cursorRadius = this.#lineWidth / 2;
-    this.#cursor.style.left = `${event.clientX - cursorRadius}px`;
-    this.#cursor.style.top = `${event.clientY - cursorRadius}px`;
-  }
-
-  #showCursor(event) {
-    this.#changeCursorSize();
-    this.#cursor.classList.add('block');
-  }
-
-  #hideCursor(event) {
-    this.#cursor.classList.remove('block');
-  }
-
   get #canvas() {
     return this.#context.canvas;
   }
@@ -260,5 +239,85 @@ export class MaskTool {
     }
     return masks;
     // return Promise.all(this.#maskImages.map(this.#maskImageToBlob.bind(this)));
+  }
+
+  getLineWidth() {
+    return +this.#lineWidth;
+  }
+}
+
+export class CursorTool {
+  #cursor;
+  #canvas;
+  #lineWidth;
+  #clientX;
+  #clientY;
+  #background;
+
+  constructor(cursor, canvas, lineWidth) {
+    this.#canvas = canvas;
+    this.#cursor = cursor;
+    this.#lineWidth = lineWidth;
+    this.#cursor.style.background = this.#background =
+      'rgba(255, 255, 255, 0.4';
+    this.#addEventListener();
+  }
+  #addEventListener() {
+    // cursor
+    window.addEventListener('keydown', this.#onKeydown.bind(this));
+    this.#canvas.addEventListener('mousemove', this.#moveCursor.bind(this));
+    this.#canvas.addEventListener('mouseenter', this.#showCursor.bind(this));
+    this.#canvas.addEventListener('mouseout', this.#hideCursor.bind(this));
+  }
+
+  #moveCursor(event) {
+    const cursorRadius = this.#lineWidth / 2;
+    if (event.clientX && event.clientY) {
+      [this.#clientX, this.#clientY] = [event.clientX, event.clientY];
+    }
+    this.#cursor.style.left = `${this.#clientX - cursorRadius}px`;
+    this.#cursor.style.top = `${this.#clientY - cursorRadius}px`;
+  }
+
+  #showCursor() {
+    this.#changeCursorSize();
+    this.#cursor.classList.add('block');
+  }
+
+  #hideCursor() {
+    this.#cursor.classList.remove('block');
+  }
+
+  #changeCursorSize() {
+    this.#cursor.style.width = this.#cursor.style.height = `${
+      this.#lineWidth
+    }px`;
+  }
+
+  #invertColor() {
+    this.#cursor.style['background'] = this.#background =
+      this.#background === 'rgba(255, 255, 255, 0.4'
+        ? 'rgba(0, 0, 0, 0.4'
+        : 'rgba(255, 255, 255, 0.4';
+  }
+
+  #onKeydown(event) {
+    switch (event.code) {
+      case toolsConfig.keys.invertColor:
+        this.#invertColor();
+        break;
+      case toolsConfig.keys.increment:
+        this.#lineWidth += 1;
+        break;
+      case toolsConfig.keys.decrement:
+        this.#lineWidth = Math.max(this.#lineWidth - 1, 0);
+        break;
+    }
+    this.#changeCursorSize();
+    this.#moveCursor(event);
+  }
+
+  setLineWidth(lineWidth) {
+    this.#lineWidth = lineWidth;
   }
 }

@@ -1,4 +1,4 @@
-import { onMount, createSignal, createEffect } from 'solid-js';
+import { onMount, createSignal, createEffect, on } from 'solid-js';
 import { styled } from 'solid-styled-components';
 import { createFormControl } from 'solid-forms';
 
@@ -13,6 +13,7 @@ import {
   matchImageToCamera,
   readImage,
   readJSON,
+  CursorTool,
 } from '../../helpers/image-masks';
 import { postEditImageMasks } from '../../helpers/api';
 
@@ -26,13 +27,16 @@ const EditMaskSection = () => {
 
   const [currentIdx, setCurrentIdx] = createSignal(0);
   let buttonNext, buttonPrev;
-  let canvas, cursor, maskTool;
+  let canvas, cursor, maskTool, cursorTool;
+
+  const lineWidth = 24;
 
   const currentImage = () => images()[currentIdx()];
   const numImages = () => images().length;
 
   onMount(() => {
-    maskTool = new MaskTool(canvas, cursor, 24);
+    maskTool = new MaskTool(canvas, lineWidth);
+    cursorTool = new CursorTool(cursor, canvas, lineWidth);
   });
 
   const onLoadFiles = async (event) => {
