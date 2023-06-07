@@ -20,6 +20,7 @@ const EditSection = () => {
 
   const onSubmit = async () => {
     experimentId.setErrors(null);
+
     const email = storage.getItem('email');
     if (!email) {
       experimentId.setErrors({ message: 'Email is invalid!' });

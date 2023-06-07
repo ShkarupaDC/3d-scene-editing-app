@@ -35,10 +35,15 @@ const EditMaskSection = () => {
   const currentImage = () => images()[currentIdx()];
   const numImages = () => images().length;
 
-  onMount(() => (maskTool = new MaskTool(canvas, 24)));
+  onMount(() => {
+    maskTool = new MaskTool(canvas, 24);
+  });
 
   const onLoadFiles = async (event) => {
     inExperimentId.setErrors(null);
+    setImages([]);
+    setCameras([]);
+    maskTool.reset();
 
     if (!event.target.files.length) {
       inExperimentId.setErrors({ message: 'Files are missing' });
@@ -61,8 +66,6 @@ const EditMaskSection = () => {
 
     const newImages = await Promise.all(imageFiles.map(readImage));
     const newCameras = await Promise.all(cameraFiles.map(readJSON));
-
-    maskTool.reset();
     newImages.forEach((image) => maskTool.addMask(image.width, image.height));
 
     setCurrentIdx(0);
@@ -70,10 +73,12 @@ const EditMaskSection = () => {
 
     setImages(newImages);
     setCameras(newCameras);
+    onImageChange(0);
   };
 
   const onSubmit = async () => {
     inExperimentId.setErrors(null);
+
     const email = storage.getItem('email');
     if (!email) {
       inExperimentId.setErrors({ message: 'Email is invalid!' });
@@ -110,9 +115,6 @@ const EditMaskSection = () => {
       0,
       Math.min(currentIdx() + direction, numImages() - 1),
     );
-    if (currentIdx() === nextIdx) {
-      return;
-    }
     setCurrentIdx(nextIdx);
     buttonPrev.disabled = currentIdx() === 0;
     buttonNext.disabled = currentIdx() === Math.max(0, numImages() - 1);
