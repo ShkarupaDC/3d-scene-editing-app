@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls';
 
 import { handleAPIError, API_URL } from './api';
 
@@ -32,11 +32,11 @@ class Viewer3d {
   _cameraControl;
   _mouseEvent;
 
-  constructor(background = 0xd0d0d0) {
+  constructor(canvas = undefined, background = 0xd0d0d0) {
     this._camera = new THREE.PerspectiveCamera(50, 4 / 3, 0.1, 1000);
     this._scene = new THREE.Scene();
     this._scene.background = new THREE.Color(background);
-    this.#renderer = new THREE.WebGLRenderer(); // { canvas }
+    this.#renderer = new THREE.WebGLRenderer({ canvas });
     this.#meshLoader = new PLYLoader();
 
     this.#renderer.setSize(1000, 750);
@@ -45,7 +45,13 @@ class Viewer3d {
 
     const axes = new THREE.AxesHelper(1);
     this._scene.add(axes);
-    this._cameraControl = new OrbitControls(this._camera, this.canvas); // TrackballControls does not work
+    this._cameraControl = new TrackballControls(this._camera, this.canvas);
+
+    // config cameraControl
+    this._cameraControl.rotateSpeed = 10;
+    this._cameraControl.zoomSpeed = 1;
+    this._cameraControl.noPan = true;
+
     this._cameraControl.update();
 
     window.addEventListener('mousemove', this.#catchMouseEvent.bind(this));

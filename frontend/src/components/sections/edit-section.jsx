@@ -8,6 +8,7 @@ import RadioInput from '../form/inputs/radio-input';
 import SidebarLayout from '../layouts/sidebar-layout';
 import { postEditAABB } from '../../helpers/api';
 import { EditAABBViewer3d } from '../../helpers/3d-viewer';
+import { onMount } from 'solid-js';
 
 const storage = localStorage;
 
@@ -15,8 +16,11 @@ const EditSection = () => {
   const region = createFormControl('outer');
   const experimentId = createFormControl('');
 
-  const viewer = new EditAABBViewer3d();
-  viewer.runLoop();
+  let viewer, canvas;
+  onMount(() => {
+    viewer = new EditAABBViewer3d(canvas);
+    viewer.runLoop();
+  });
 
   const onSubmit = async () => {
     experimentId.setErrors(null);
@@ -56,7 +60,7 @@ const EditSection = () => {
     <>
       <Header text='Edit scene with AABB' />
       <Wrapper>
-        <div>{viewer.canvas}</div>
+        <canvas ref={canvas} />
         <SidebarLayout>
           <div>
             <Header text={`Region`} sidebar />
