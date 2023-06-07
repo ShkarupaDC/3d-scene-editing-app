@@ -1,6 +1,6 @@
 import { styled } from 'solid-styled-components';
 import { createFormControl, createFormArray, bindOwner } from 'solid-forms';
-import { For } from 'solid-js';
+import { For, onMount } from 'solid-js';
 
 import HashInput from '../form/hash-input';
 import Button from '../form/button';
@@ -18,8 +18,11 @@ const ComposeSection = () => {
   const outExperimentId = createFormControl('');
   const experiments = createFormArray([]);
 
-  const viewer = new ComposeViewer3d();
-  viewer.runLoop();
+  let viewer, canvas;
+  onMount(() => {
+    viewer = new ComposeViewer3d(canvas);
+    viewer.runLoop();
+  });
 
   const onLoadMesh = async () => {
     inExperimentId.setErrors(null);
@@ -89,7 +92,7 @@ const ComposeSection = () => {
     <>
       <Header text="Compose scenes" />
       <Wrapper>
-        <div>{viewer.canvas}</div>
+        <canvas ref={canvas} />
         <Sidebar>
           <Fieldset>
             <HashInput

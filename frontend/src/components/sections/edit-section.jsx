@@ -7,6 +7,7 @@ import Button from '../form/button';
 import Header from '../header';
 import { postEditAABB } from '../../helpers/api';
 import { EditAABBViewer3d } from '../../helpers/3d-viewer';
+import { onMount } from 'solid-js';
 
 const storage = localStorage;
 
@@ -14,8 +15,11 @@ const EditSection = () => {
   const region = createFormControl('outer');
   const experimentId = createFormControl('');
 
-  const viewer = new EditAABBViewer3d();
-  viewer.runLoop();
+  let viewer, canvas;
+  onMount(() => {
+    viewer = new EditAABBViewer3d(canvas);
+    viewer.runLoop();
+  });
 
   const onSubmit = async () => {
     experimentId.setErrors(null);
@@ -54,7 +58,7 @@ const EditSection = () => {
     <>
       <Header text="Edit scene" />
       <Wrapper>
-        <div>{viewer.canvas}</div>
+        <canvas ref={canvas} />
         <Sidebar>
           <div>
             {/* onChange={(event) => region.setValue(event.target.value)} */}
