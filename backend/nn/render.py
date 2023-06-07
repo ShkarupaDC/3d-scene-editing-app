@@ -15,7 +15,7 @@ from PIL import Image
 from common import Scene, Camera, JsonDict, ImageSize, Device, _decompose_T as decompose_T
 from utils import load_model, generate_rays
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('nn')
 
 
 @dataclass

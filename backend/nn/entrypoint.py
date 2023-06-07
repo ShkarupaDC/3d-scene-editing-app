@@ -1,7 +1,6 @@
 import argparse
 import logging
 import signal
-import time
 from pathlib import Path
 
 import torch
@@ -14,7 +13,7 @@ from utils import read_json, set_signal_handler
 logging.basicConfig(
     format="%(asctime)s - [%(levelname)s] - %(name)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S")
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('nn')
 
 
 def handle_quit() -> None:
@@ -44,7 +43,7 @@ if __name__ == "__main__":
     set_signal_handler(signal.SIGQUIT, handle_quit, reraise_default=True)
     args = get_parser().parse_args()
 
-    logging.getLogger().setLevel(getattr(logging, args.log_level))
+    logger.setLevel(getattr(logging, args.log_level))
     device = torch.device(args.device)
     if device.type == "cuda":
         torch.cuda.set_device(device.index or 0)

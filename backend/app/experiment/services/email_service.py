@@ -26,9 +26,7 @@ class EmailService:
         self.start_TLS = start_TLS
 
     async def send_email(self, message: email.message.EmailMessage) -> None:
-        # await asyncio.sleep(3)
         logger.info(f"Email is sent! {message['Subject']}")
-        # return
         await aiosmtplib.send(message=message,
                               hostname=self.smtp_host,
                               port=self.smtp_port,
@@ -94,16 +92,16 @@ class ExperimentEmailService:
             body = "Go back to app and check it!"
         elif experiment.state is ExperimentState.FAILED:
             subject = f"{type_name} experiment {experiment.id} is failed("
-            body = "Look at stderr.txt to find failure reason"
+            body = "Look at stdout.txt and stderr.txt to find failure reason"
         else:
             assert experiment.state in {
                 ExperimentState.PENDING, ExperimentState.STOPPED
             }
-            subject = f"{type_name} experiment {experiment.id} was not done... Please, resubmit it!"
+            body = "Please resubmit it!"
             if experiment.state is ExperimentState.PENDING:
-                body = "Experiment has not been started"
+                subject = f"{type_name} experiment {experiment.id} has not been started..."
             else:
-                body = "Experiment was stopped"
+                subject = f"{type_name} experiment {experiment.id} was stopped..."
         return subject, body
 
     def _get_text_attachments(

@@ -59,6 +59,8 @@ def set_aabb_volume_mask(model: CCNeRF,
 
     if inner_region:
         model.shrink(aabb)
+        aabb_center = (aabb[0] + aabb[1]) / 2
+        model.aabb -= aabb_center
     else:
         alpha_grid: torch.Tensor = model.alphaMask.alpha_volume  # 1, 1, D, H, W
         alpha_grid_size = torch.tensor(alpha_grid.shape[-1:1:-1],
@@ -116,13 +118,19 @@ def set_image_mask_based_volume_mask(model: CCNeRF,
                     alpha_grid,
                     zero,
                     out=model.alphaMask.alpha_volume)
-        occupied_cells = torch.nonzero(model.alphaMask.alpha_volume)
-        aabb_min = model.aabb[0] + (occupied_cells.min(dim=0).values /
-                                    model.gridSize) * model.aabbSize
-        aabb_max = model.aabb[0] + (occupied_cells.max(dim=0).values /
-                                    model.gridSize) * model.aabbSize
+        occupied_cells = torch.nonzero(
+            model.alphaMask.alpha_volume[0, 0]).flip(dims=[1])
+
+        min_idx = occupied_cells.min(dim=0).values
+        max_idx = occupied_cells.max(dim=0).values
+
+        aabb_min = model.aabb[0] + (min_idx / alpha_grid_size) * model.aabbSize
+        aabb_max = model.aabb[0] + (max_idx / alpha_grid_size) * model.aabbSize
         new_aabb = torch.stack([aabb_min, aabb_max])
+
         model.shrink(new_aabb)
+        aabb_center = (new_aabb[0] + new_aabb[1]) / 2
+        model.aabb -= aabb_center
     else:
         torch.where(vote_grid >= mask_count,
                     zero,

@@ -11,11 +11,6 @@ from app.utils import interrupt_experiments_on_sigint, setup_logging
 from app.config import settings
 from app.experiment.routes import router
 
-# 1. Run service
-# 2. Fix edit/image-masks route - done
-# 3. Custom errors - done
-# 4. Edit AABB/image-masks - won't do
-
 
 @contextlib.asynccontextmanager
 async def lifespan(app: FastAPI) -> None:

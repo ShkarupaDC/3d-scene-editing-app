@@ -26,7 +26,7 @@ DEFAULT_HANDLERS = {
     for signum in signal.valid_signals()
 }
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('nn')
 
 
 def read_json(path: Path, **kwargs: Any) -> Any:

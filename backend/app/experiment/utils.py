@@ -51,7 +51,7 @@ def _json_encoder(obj: object) -> Any:
         pass
     else:
         return list(iterable)
-    return json.encoder.JSONEncoder.default(obj)
+    return json.encoder.JSONEncoder.default(o=obj)
 
 
 def write_json_to_string(data: Any) -> str:
@@ -91,6 +91,7 @@ def dataclass_from_json(class_: Type[T], data: Any) -> T:
             })
     class_origin = typing.get_origin(class_)
     class_args = typing.get_args(class_)
+    error_message = f"Unsupported type {class_}!"
     if class_origin == tuple:
         return tuple(
             dataclass_from_json(type, value)
@@ -100,6 +101,6 @@ def dataclass_from_json(class_: Type[T], data: Any) -> T:
     if class_origin is None:
         try:
             return class_(data)
-        except Exception:
-            pass
-    raise RuntimeError(f"Unsupported type {class_}!")
+        except Exception as exc:
+            raise RuntimeError(error_message) from exc
+    raise RuntimeError(error_message)

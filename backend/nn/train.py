@@ -14,7 +14,7 @@ import gdown
 from common import JsonDict, Device
 from utils import export_mesh
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('nn')
 
 GDRIVE_FILE_ID = re.compile("/d/(.+)/")
 
@@ -113,7 +113,7 @@ def train_scene(config: TrainConfig, device: Device) -> Path:
     config_path.write_text(config_text)
 
     train_args = config_parser(f"--config {config_path} --device {device}")
-    logger.info(f"Start training...")
+    logger.info("Start training...")
     reconstruction(train_args)
 
     model_path = config.base_path.joinpath(f"{config.base_path.name}_5.th")
