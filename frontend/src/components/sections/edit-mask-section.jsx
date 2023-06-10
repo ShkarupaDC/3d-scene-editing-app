@@ -11,6 +11,7 @@ import SectionLayoutWithSidebar from '../layouts/section-layout';
 import SidebarLayout from '../layouts/sidebar-layout';
 import Button from '../form/button';
 import {
+  Cursor,
   MaskTool,
   groupFiles,
   compareFileName,
@@ -30,14 +31,12 @@ const EditMaskSection = () => {
 
   const [currentIdx, setCurrentIdx] = createSignal(0);
   let buttonNext, buttonPrev;
-  let canvas, maskTool;
+  let canvas, cursor, maskTool;
 
   const currentImage = () => images()[currentIdx()];
   const numImages = () => images().length;
 
-  onMount(() => {
-    maskTool = new MaskTool(canvas, 24);
-  });
+  onMount(() => (maskTool = new MaskTool(canvas, new Cursor(cursor), 24)));
 
   const onLoadFiles = async (event) => {
     inExperimentId.setErrors(null);
@@ -124,6 +123,7 @@ const EditMaskSection = () => {
   return (
     <SectionLayoutWithSidebar header={`Edit scene with image masks`}>
       <WorkArea>
+        <CursorHTML ref={cursor} />
         <Canvas ref={canvas} />
         {images().length ? (
           <ImageHTML
@@ -209,12 +209,22 @@ const WorkArea = styled('div')`
   height: fit-content;
 `;
 
+const CursorHTML = styled.span`
+  display: none;
+  border: 1px solid #212121;
+  border-radius: 50%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  z-index: 750;
+  opacity: 0.4;
+`;
+
 const Canvas = styled.canvas`
   position: absolute;
   left: 50%;
   top: 50%;
   translate: -50% -50%;
-  cursor: crosshair;
+  cursor: none;
   outline: none;
   z-index: 1000;
   opacity: 0.4;

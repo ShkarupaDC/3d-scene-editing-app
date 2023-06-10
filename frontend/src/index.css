@@ -15,6 +15,10 @@ body {
   word-break: break-word;
 }
 
+.block {
+  display: block !important;
+}
+
 fieldset {
   border: none;
   margin: 0;
