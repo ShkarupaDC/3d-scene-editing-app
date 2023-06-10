@@ -224,7 +224,7 @@ const Canvas = styled.canvas`
   left: 50%;
   top: 50%;
   translate: -50% -50%;
-  cursor: default;
+  cursor: none;
   outline: none;
   z-index: 1000;
   opacity: 0.4;
