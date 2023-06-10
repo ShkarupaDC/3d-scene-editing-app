@@ -1,7 +1,7 @@
 import { createFormControl } from 'solid-forms';
 import { styled } from 'solid-styled-components';
 
-import TextInput from '../form/text-input';
+import TextInput from '../form/inputs/text-input';
 import Header from '../header';
 import { createEffect, onMount } from 'solid-js';
 
@@ -32,7 +32,7 @@ const EmailSection = () => {
 
   return (
     <>
-      <Header text="Email" />
+      <Header text='Email' />
       <Fieldset>
         <TextInput
           type={`email`}
@@ -50,9 +50,8 @@ const EmailSection = () => {
 export default EmailSection;
 
 const Fieldset = styled('fieldset')`
+  width: 425px;
+  max-width: 425px;
   display: flex;
-  justify-content: center;
-  input {
-    width: 350px;
-  }
+  margin: auto;
 `;

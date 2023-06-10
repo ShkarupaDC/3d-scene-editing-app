@@ -2,10 +2,11 @@ import { createFormControl } from 'solid-forms';
 import { createSignal } from 'solid-js';
 import { styled } from 'solid-styled-components';
 
-import HashInput from '../form/hash-input';
+import HashInput from '../form/inputs/hash-input';
 import Button from '../form/button';
 import Header from '../header';
 import { getRendering } from '../../helpers/api';
+import SidebarLayout from '../layouts/sidebar-layout';
 
 const RenderingSection = () => {
   const [imageSrc, setImageSrc] = createSignal('');
@@ -13,6 +14,7 @@ const RenderingSection = () => {
   let imageRef;
 
   const fetchRendering = async () => {
+    experimentId.setErrors(null);
     if (!experimentId.isValid) {
       return;
     }
@@ -25,7 +27,7 @@ const RenderingSection = () => {
   };
   return (
     <>
-      <Header text="Rendered Image" />
+      <Header text='Rendered Image' />
       <Wrapper>
         <ImageContainer
           href={imageSrc()}
@@ -34,34 +36,38 @@ const RenderingSection = () => {
         >
           <img src={imageSrc()} />
         </ImageContainer>
-        <Sidebar>
-          <Fieldset>
-            <HashInput
-              name={`image`}
-              placeholder={`Experiment Id`}
-              control={experimentId}
-            />
+        <SidebarLayout>
+          <div>
+            <Header text='Load Experiment' sidebar />
+            <Fieldset>
+              <HashInput
+                name={`image`}
+                placeholder={`Experiment Id`}
+                control={experimentId}
+              />
+              <Button
+                name={`submit`}
+                placeholder={`Load`}
+                type={`button`}
+                onClick={fetchRendering}
+              />
+            </Fieldset>
+          </div>
+          <div>
             <Button
-              name={`submit`}
-              placeholder={`Load`}
+              name={`apply`}
+              placeholder={`Download`}
               type={`button`}
-              onClick={fetchRendering}
+              onClick={() => imageRef.click()}
             />
-          </Fieldset>
-          <Button
-            name={`apply`}
-            placeholder={`Download`}
-            type={`button`}
-            onClick={() => imageRef.click()}
-          />
-        </Sidebar>
+          </div>
+        </SidebarLayout>
       </Wrapper>
     </>
   );
 };
 
 export default RenderingSection;
-
 const Wrapper = styled('div')`
   justify-content: center;
   display: grid;
@@ -70,21 +76,7 @@ const Wrapper = styled('div')`
 `;
 
 const Fieldset = styled('fieldset')`
-  display: flex;
-  width: 100%;
-  input {
-    width: 192px;
-  }
-  button {
-    width: 66px;
-  }
-`;
-
-const Sidebar = styled('div')`
-  display: flex;
-  align-self: baseline;
-  flex-wrap: wrap;
-  gap: 32px;
+  width: 256px;
 `;
 
 const ImageContainer = styled('a')`

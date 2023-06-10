@@ -2,12 +2,13 @@ import { styled } from 'solid-styled-components';
 import { createFormControl, createFormArray, bindOwner } from 'solid-forms';
 import { For, onMount } from 'solid-js';
 
-import HashInput from '../form/hash-input';
+import HashInput from '../form/inputs/hash-input';
 import Button from '../form/button';
-import TextInput from '../form/text-input';
 import Header from '../header';
 import { ComposeViewer3d } from '../../helpers/3d-viewer';
 import { postRender } from '../../helpers/api';
+import SectionLayoutWithSidebar from '../layouts/section-layout';
+import SidebarLayout from '../layouts/sidebar-layout';
 
 const MAX_EXPERIMENTS = 5;
 
@@ -36,7 +37,6 @@ const ComposeSection = () => {
       const meshId = await viewer.addMesh(inExperimentId.value);
       const control = createFormControl(inExperimentId.value, {
         data: { meshId },
-        disabled: true,
         readonly: true,
       });
       experiments.push(control);
@@ -54,6 +54,7 @@ const ComposeSection = () => {
   };
 
   const onSubmit = async () => {
+    outExperimentId.setErrors(null);
     const email = storage.getItem('email');
     if (!email) {
       outExperimentId.setErrors({ message: 'Email is invalid!' });
@@ -89,11 +90,11 @@ const ComposeSection = () => {
   };
 
   return (
-    <>
-      <Header text="Compose scenes" />
-      <Wrapper>
-        <canvas ref={canvas} />
-        <Sidebar>
+    <SectionLayoutWithSidebar header={`Compose scenes`}>
+      <canvas ref={canvas} />
+      <SidebarLayout>
+        <div>
+          <Header text='Add experiment' sidebar />
           <Fieldset>
             <HashInput
               name={`experimentId`}
@@ -107,29 +108,38 @@ const ComposeSection = () => {
               onClick={bindOwner(onLoadMesh)}
             />
           </Fieldset>
-          <For each={experiments.controls}>
-            {(experimentControl, index) => (
-              <Fieldset>
-                <HashInput
-                  name={`experimentId`}
-                  placeholder={`Experiment Id`}
-                  control={experimentControl}
-                />
-                <Button
-                  name={`submit`}
-                  placeholder={`Remove`}
-                  type={`button`}
-                  onClick={() => onRemoveMesh(experimentControl, index)}
-                />
-              </Fieldset>
-            )}
-          </For>
-          <TextInput
-            name={`experimentId`}
-            placeholder={`Experiment Id`}
-            control={outExperimentId}
-          />
-          <BottomWrapper>
+          <Show when={!!experiments.value.length}>
+            <Header text='Experiments' sidebar />
+            <Fieldsets>
+              <For each={experiments.controls}>
+                {(experimentControl, index) => (
+                  <Fieldset>
+                    <HashInput
+                      name={`experimentId_${index()}`}
+                      placeholder={`Experiment Id`}
+                      control={experimentControl}
+                      showError={false}
+                      disabled
+                    />
+                    <Button
+                      name={`submit`}
+                      placeholder={`Remove`}
+                      type={`button`}
+                      onClick={() => onRemoveMesh(experimentControl, index)}
+                    />
+                  </Fieldset>
+                )}
+              </For>
+            </Fieldsets>
+          </Show>
+        </div>
+        <div>
+          <Fieldset>
+            <HashInput
+              name={`experimentId`}
+              placeholder={`Experiment Id`}
+              control={outExperimentId}
+            />
             <Button
               name={`submit`}
               placeholder={`Render`}
@@ -137,44 +147,21 @@ const ComposeSection = () => {
               disabled={!inExperimentId.isValid}
               onClick={onSubmit}
             />
-          </BottomWrapper>
-        </Sidebar>
-      </Wrapper>
-    </>
+          </Fieldset>
+        </div>
+      </SidebarLayout>
+    </SectionLayoutWithSidebar>
   );
 };
 
 export default ComposeSection;
 
-const Wrapper = styled('section')`
-  justify-content: center;
-  display: grid;
-  grid-template-columns: 1000px 256px;
-  gap: 32px;
-  input: {
-    width: 100%;
-  }
-`;
-
 const Fieldset = styled('fieldset')`
-  display: flex;
-  width: 100%;
-  input {
-    width: 192px;
-  }
-  button {
-    width: 66px;
-  }
+  width: 256px;
 `;
 
-const Sidebar = styled('div')`
-  display: flex;
-  align-self: baseline;
+const Fieldsets = styled('fieldset')`
+  display: block;
+  row-gap: 24px;
   flex-wrap: wrap;
-  gap: 32px;
-`;
-
-const BottomWrapper = styled.div`
-  display: flex;
-  vertical-align: bottom;
 `;

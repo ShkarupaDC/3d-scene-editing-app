@@ -1,8 +1,8 @@
 import { styled } from 'solid-styled-components';
 import { createFormControl, createFormGroup } from 'solid-forms';
 
-import TextInput from '../form/text-input';
-import HashInput from '../form/hash-input';
+import TextInput from '../form/inputs/text-input';
+import HashInput from '../form/inputs/hash-input';
 import Button from '../form/button';
 import Header from '../header';
 import { postTrain } from '../../helpers/api';
@@ -17,31 +17,30 @@ const TrainSection = () => {
   const controls = () => group.controls;
 
   const onSubmit = async () => {
+    controls().experimentId.setValue('');
+    controls().dataURL.setErrors(null);
+
     const email = storage.getItem('email');
     if (!email) {
-      controls().dataURL.patchErrors({ message: 'Email is invalid!' });
+      controls().dataURL.setErrors({ message: 'Email is invalid!' });
       return;
     }
     if (!controls().dataURL.isValid) {
-      controls().dataURL.markTouched(true);
-    } else {
-      group.markPending(true);
-      try {
-        const experimentId = await postTrain(email, controls().dataURL.value);
-        controls().experimentId.setValue(experimentId);
-        controls().experimentId.markDisabled(false);
-        group.markSubmitted(true);
-      } catch (error) {
-        controls().dataURL.patchErrors({ message: error.message });
-      } finally {
-        group.markPending(false);
-      }
+      controls().dataURL.setErrors({ message: 'Data URL is invalid!' });
+      return;
+    }
+    try {
+      const experimentId = await postTrain(email, controls().dataURL.value);
+      controls().experimentId.setValue(experimentId);
+      controls().experimentId.markDisabled(false);
+    } catch (error) {
+      controls().dataURL.setErrors({ message: error.message });
     }
   };
 
   return (
     <>
-      <Header text="Train" />
+      <Header text='Train' />
       <Wrapper>
         <Container>
           <form>
@@ -83,18 +82,10 @@ const Wrapper = styled('section')`
 `;
 
 const Fieldset = styled('fieldset')`
-  display: flex;
   bottom: 0;
-  width: 350px;
-  input {
-    width: 250px;
-  }
-  button {
-    width: 100px;
-  }
 `;
 
 const Container = styled('div')`
-  width: 350px;
+  width: 425px;
   position: relative;
 `;

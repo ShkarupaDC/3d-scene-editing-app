@@ -48,6 +48,35 @@ export const readImage = (file) => {
 
 export const readJSON = async (file) => JSON.parse(await file.text());
 
+export class Cursor {
+  #element;
+
+  constructor(element) {
+    this.#element = element;
+  }
+
+  move(position) {
+    this.#element.style.left = `${position.x}px`;
+    this.#element.style.top = `${position.y}px`;
+  }
+
+  show() {
+    this.#element.classList.add('block');
+  }
+
+  hide() {
+    this.#element.classList.remove('block');
+  }
+
+  set size(size) {
+    this.#element.style.width = this.#element.style.height = `${size}px`;
+  }
+
+  set color(color) {
+    this.#element.style.backgroundColor = color;
+  }
+}
+
 export class MaskTool {
   #context;
   #maskContext;
@@ -59,15 +88,17 @@ export class MaskTool {
   #lineWidth;
   #color;
   #defaults;
+  #cursor;
 
-  constructor(canvas, lineWidth) {
+  constructor(canvas, cursor, lineWidth) {
     this.#context = canvas.getContext('2d', { willReadFrequently: true });
     const maskCanvas = document.createElement('canvas');
     this.#maskContext = maskCanvas.getContext('2d', {
       willReadFrequently: true,
     });
-    this.#color = '#fff';
-    this.#lineWidth = lineWidth;
+    this.#cursor = cursor;
+    this.#cursor.color = this.#color = '#fff';
+    this.#cursor.size = this.#lineWidth = lineWidth;
     this.#defaults = { color: this.#color, lineWidth: this.#lineWidth };
     this.#addEventListeners();
   }
@@ -76,8 +107,9 @@ export class MaskTool {
     window.addEventListener('mousemove', this.#catchMouseEvent.bind(this));
     window.addEventListener('keydown', this.#onKeydown.bind(this));
     this.#canvas.addEventListener('mousedown', this.#startDrawing.bind(this));
-    this.#canvas.addEventListener('mousemove', this.#draw.bind(this));
-    this.#canvas.addEventListener('mouseout', this.#stopDrawing.bind(this));
+    this.#canvas.addEventListener('mousemove', this.#onMouseMove.bind(this));
+    this.#canvas.addEventListener('mouseenter', this.#onEnterCanvas.bind(this));
+    this.#canvas.addEventListener('mouseout', this.#onLeaveCanvas.bind(this));
     this.#canvas.addEventListener('mouseup', this.#stopDrawing.bind(this));
   }
 
@@ -89,17 +121,38 @@ export class MaskTool {
     if (!this.#mouseEvent || this.#mouseEvent.target !== this.#canvas) {
       return;
     }
-    switch (event.key) {
-      case 'i':
+    switch (event.code) {
+      case 'KeyI':
         this.#invertColor();
+        this.#cursor.color = this.#color;
         break;
-      case 'u':
+      case 'KeyU':
         this.#lineWidth += 1;
+        this.#cursor.size = this.#lineWidth;
         break;
-      case 'd':
+      case 'KeyD':
         this.#lineWidth = Math.max(this.#lineWidth - 1, 0);
+        this.#cursor.size = this.#lineWidth;
         break;
     }
+  }
+
+  #onEnterCanvas(event) {
+    this.#cursor.show();
+    if (event.buttons === 1 && event.button === 0) {
+      // left button is pressed
+      this.#startDrawing(event);
+    }
+  }
+
+  #onLeaveCanvas(event) {
+    this.#cursor.hide();
+    this.#stopDrawing();
+  }
+
+  #onMouseMove(event) {
+    this.#cursor.move({ x: event.clientX, y: event.clientY });
+    this.#draw(event);
   }
 
   #startDrawing(event) {
@@ -114,18 +167,20 @@ export class MaskTool {
     if (!this.#drawing) {
       return;
     }
+    const nextPosition = this.#getMousePosition(event);
+
     this.#context.beginPath();
     this.#context.strokeStyle = this.#color;
     this.#context.lineCap = 'round';
     this.#context.lineWidth = this.#lineWidth;
     this.#context.moveTo(this.#position.x, this.#position.y);
-    const nextPosition = this.#getMousePosition(event);
     this.#context.lineTo(nextPosition.x, nextPosition.y);
     this.#context.stroke();
+
     this.#position = nextPosition;
   }
 
-  #stopDrawing(event) {
+  #stopDrawing() {
     if (!this.#drawing) {
       return;
     }

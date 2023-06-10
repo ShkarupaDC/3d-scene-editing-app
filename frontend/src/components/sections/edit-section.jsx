@@ -1,10 +1,11 @@
 import { styled } from 'solid-styled-components';
 import { createFormControl } from 'solid-forms';
 
-import HashInput from '../form/hash-input';
-import TextInput from '../form/text-input';
+import HashInput from '../form/inputs/hash-input';
 import Button from '../form/button';
 import Header from '../header';
+import RadioInput from '../form/inputs/radio-input';
+import SidebarLayout from '../layouts/sidebar-layout';
 import { postEditAABB } from '../../helpers/api';
 import { EditAABBViewer3d } from '../../helpers/3d-viewer';
 import { onMount } from 'solid-js';
@@ -23,6 +24,7 @@ const EditSection = () => {
 
   const onSubmit = async () => {
     experimentId.setErrors(null);
+
     const email = storage.getItem('email');
     if (!email) {
       experimentId.setErrors({ message: 'Email is invalid!' });
@@ -56,49 +58,53 @@ const EditSection = () => {
 
   return (
     <>
-      <Header text="Edit scene" />
+      <Header text='Edit scene with AABB' />
       <Wrapper>
         <canvas ref={canvas} />
-        <Sidebar>
+        <SidebarLayout>
           <div>
-            {/* onChange={(event) => region.setValue(event.target.value)} */}
-            <TextInput
-              type={`radio`}
-              name={`region`}
-              value={`inner`}
-              placeholder={`Inner`}
-              onChange={(event) => region.setValue(event.target.value)}
-            />
-            <TextInput
-              type={`radio`}
-              name={`region`}
-              value={`outer`}
-              placeholder={`Outer`}
-              checked
-              onChange={(event) => region.setValue(event.target.value)}
-            />
+            <Header text={`Region`} sidebar />
+            <Fieldset>
+              <RadioInput
+                name={`region-edit`}
+                id={`region-edit-inner`}
+                value={`inner`}
+                placeholder={`Inner`}
+                onChange={(event) => region.setValue(event.target.value)}
+              />
+              <RadioInput
+                name={`region-edit`}
+                id={`region-edit-outer`}
+                value={`outer`}
+                placeholder={`Outer`}
+                checked
+                onChange={(event) => region.setValue(event.target.value)}
+              />
+            </Fieldset>
+            <Header text={`Load Experiment`} sidebar />
+            <Fieldset>
+              <HashInput
+                name={`experimentId`}
+                placeholder={`Experiment Id`}
+                control={experimentId}
+              />
+              <Button
+                name={`submit`}
+                placeholder={`Load`}
+                type={`button`}
+                onClick={onLoadMesh}
+              />
+            </Fieldset>
           </div>
-        </Sidebar>
-        <Fieldset left>
-          <HashInput
-            name={`experimentId`}
-            placeholder={`Experiment Id`}
-            control={experimentId}
-          />
           <Button
-            name={`submit`}
-            placeholder={`Load`}
+            bottom
+            name={`apply`}
+            placeholder={`Apply`}
             type={`button`}
-            onClick={onLoadMesh}
+            disabled={!experimentId.isValid}
+            onClick={onSubmit}
           />
-        </Fieldset>
-        <Button
-          name={`apply`}
-          placeholder={`Apply`}
-          type={`button`}
-          disabled={!experimentId.isValid}
-          onClick={onSubmit}
-        />
+        </SidebarLayout>
       </Wrapper>
     </>
   );
@@ -109,22 +115,10 @@ export default EditSection;
 const Wrapper = styled('section')`
   justify-content: center;
   display: grid;
-  grid-template-columns: 1000px 256px;
   gap: 32px;
+  grid-template-columns: auto auto;
 `;
 
 const Fieldset = styled('fieldset')`
-  display: ${(props) => (props.left ? 'flex' : 'block')};
-  width: ${(props) => (props.left ? '1000px' : '96px')};
-  input {
-    width: ${(props) => (props.left ? '872px' : '96px')};
-  }
-  button {
-    width: 128px;
-  }
-`;
-
-const Sidebar = styled('div')`
-  display: grid;
-  grid-template-columns: auto auto;
+  width: 256px;
 `;

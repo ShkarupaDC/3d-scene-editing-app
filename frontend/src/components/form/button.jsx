@@ -4,18 +4,19 @@ import { styled } from 'solid-styled-components';
 const Button = (props) => {
   const [ownProps, buttonProps] = splitProps(props, ['placeholder']);
   return (
-    <div class="wrapper-input">
-      <Field {...buttonProps}>{ownProps.placeholder}</Field>
-    </div>
+    <>
+      <ButtonHTML {...buttonProps}>{ownProps.placeholder}</ButtonHTML>
+    </>
   );
 };
 
 export default Button;
 
-const Field = styled('button')`
+const ButtonHTML = styled('button')`
+  display: block;
   border: 2px solid var(--mainColor);
   transition: background-color 0.25s;
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: var(--mainColor);
     color: white;
   }
