@@ -5,9 +5,9 @@ import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls
 
 import { handleAPIError, API_URL } from './api';
 
-const TRANSLATE_KEY = 't';
-const SCALE_KEY = 's';
-const ROTATE_KEY = 'r';
+const TRANSLATE_KEY = 'KeyT';
+const SCALE_KEY = 'KeyS';
+const ROTATE_KEY = 'KeyR';
 
 const arrayToMatrix = (array, columns) =>
   array.reduce(
@@ -159,7 +159,7 @@ export class EditAABBViewer3d extends Viewer3d {
   }
 
   #setControlMode(event) {
-    switch (event.key) {
+    switch (event.code) {
       case TRANSLATE_KEY:
         this.#control.setMode('translate');
         break;
@@ -250,7 +250,7 @@ export class ComposeViewer3d extends Viewer3d {
   }
 
   #setControlMode(event, control) {
-    switch (event.key) {
+    switch (event.code) {
       case TRANSLATE_KEY:
         control.setMode('translate');
         break;
